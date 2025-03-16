@@ -33,8 +33,6 @@ class AirtableService {
       const existingRecord = await this.findOrderById(order.id);
       const fields = OrderDTO.toAirtableFields(order);
 
-      console.log("fields", fields);
-
       if (existingRecord) {
         // Update existing record
         return await this.table.update(existingRecord.id, fields);

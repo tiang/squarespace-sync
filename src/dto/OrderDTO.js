@@ -27,6 +27,8 @@ class OrderDTO {
     "Medical Conditions": "medical_conditions",
     "Does the student has any allergy or medical conditions?":
       "medical_conditions",
+    "Does the student has any allergy or medical condition? If yes please provide details":
+      "medical_conditions",
     "Any medical conditions?": "medical_conditions",
     "Additional Notes": "additional_notes",
     "Is there anything else we should know about?": "additional_notes",
@@ -56,7 +58,7 @@ class OrderDTO {
     order.lineItems.forEach((item) => {
       if (item.customizations && Array.isArray(item.customizations)) {
         item.customizations.forEach((customization) => {
-          const label = customization.label || "";
+          const label = (customization.label || "").trim();
           const value = customization.value || "";
 
           // Check if this label maps to one of our desired fields
