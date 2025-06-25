@@ -11,6 +11,7 @@
     "airtable": "^0.12.2",
     "axios": "^1.6.7",
     "dotenv": "^16.4.5",
+    "googleapis": "^148.0.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {

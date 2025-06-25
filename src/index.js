@@ -1,6 +1,7 @@
 const squarespaceService = require("./services/squarespace");
 const airtableService = require("./services/airtable");
 const jsonService = require("./services/json");
+const googleSheetsService = require("./services/googleSheets");
 const config = require("./config");
 const winston = require("winston");
 
@@ -37,20 +38,35 @@ async function syncOrders() {
     const savedFilename = jsonService.saveToJson(orders, "orders");
     logger.info(`Saved ${orders.length} orders to ${savedFilename}`);
 
-    const results = await airtableService.bulkUpsertOrders(orders);
-    // const results = await airtableService.bulkUpsertOrders([orders[0]]);
+    // Save orders to Google Sheets
+    const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+    const sheetName = process.env.GOOGLE_SHEET_NAME;
 
-    const successful = results.filter((r) => r.success).length;
-    const failed = results.filter((r) => !r.success).length;
+    const sheetData = [["Order ID", "Customer Email", "Total", "Status"]]; // Header row
+    const order = orders
+    // orders.forEach((order) => {
+      sheetData.push([
+        order.id,
+        order.customerEmail,
+      ]);
+    // });
 
-    logger.info(
-      `Sync completed. Successfully synced: ${successful}, Failed: ${failed}`
-    );
+    await googleSheetsService.writeData(spreadsheetId, sheetName, sheetData);
+    logger.info(`Saved ${orders.length} orders to Google Sheets`);
 
-    if (failed > 0) {
-      const failures = results.filter((r) => !r.success);
-      logger.error("Failed orders:", { failures });
-    }
+    // const results = await airtableService.bulkUpsertOrders(orders);
+
+    // const successful = results.filter((r) => r.success).length;
+    // const failed = results.filter((r) => !r.success).length;
+
+    // logger.info(
+    //   `Sync completed. Successfully synced: ${successful}, Failed: ${failed}`
+    // );
+
+    // if (failed > 0) {
+    //   const failures = results.filter((r) => !r.success);
+    //   logger.error("Failed orders:", { failures });
+    // }
   } catch (error) {
     logger.error("Sync failed:", error);
     throw error;
