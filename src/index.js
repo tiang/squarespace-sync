@@ -3,6 +3,7 @@ const airtableService = require("./services/airtable");
 const jsonService = require("./services/json");
 const config = require("./config");
 const winston = require("winston");
+const { expandOrdersByLineItems } = require("./utils/expandOrders");
 
 // Configure logger
 const logger = winston.createLogger({
@@ -37,7 +38,15 @@ async function syncOrders() {
     const savedFilename = jsonService.saveToJson(orders, "orders");
     logger.info(`Saved ${orders.length} orders to ${savedFilename}`);
 
-    const results = await airtableService.bulkUpsertOrders(orders);
+    // Filter orders with order number > orderStart
+    let orderStart = 1614;
+    filteredOrders = orders.filter(order => Number(order.orderNumber) > orderStart);
+    const expandedOrders = expandOrdersByLineItems(filteredOrders);
+    logger.info(`Filtered to ${filteredOrders.length} orders with orderNumber > ${orderStart}`);
+    logger.info(`Expanded ${filteredOrders.length} orders into ${expandedOrders.length} records (split multi-item orders)`);
+
+    const results = await airtableService.bulkUpsertOrders(expandedOrders);
+    // const results = await airtableService.bulkUpsertOrders(filteredOrders);
     // const results = await airtableService.bulkUpsertOrders([orders[0]]);
 
     const successful = results.filter((r) => r.success).length;
