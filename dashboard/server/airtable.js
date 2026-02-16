@@ -1,6 +1,7 @@
 const Airtable = require("airtable");
+const { CACHE_TTL_MINUTES } = require("./config");
 
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL_MS = CACHE_TTL_MINUTES * 60 * 1000;
 
 let table;
 let cache = null;
