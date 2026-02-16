@@ -259,5 +259,24 @@ describe("StudentMapper.transform", () => {
         makeup: false,
       });
     });
+
+    test("preserves explicit false values (tests ?? fix)", () => {
+      const rawStudent = makeStudent({
+        flags: {
+          medical: false,
+          allowImage: false,
+          trial: false,
+          waitlist: false,
+          makeup: false,
+        },
+      });
+      const result = StudentMapper.transform(rawStudent);
+      // These should all be false (explicitly set), not defaulted
+      expect(result.flags.medical).toBe(false);
+      expect(result.flags.allowImage).toBe(false);
+      expect(result.flags.trial).toBe(false);
+      expect(result.flags.waitlist).toBe(false);
+      expect(result.flags.makeup).toBe(false);
+    });
   });
 });
