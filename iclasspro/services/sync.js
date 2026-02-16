@@ -1,6 +1,7 @@
 const authService = require("./auth");
 const ClassesService = require("./classes");
 const RosterService = require("./roster");
+const FamilyService = require("./family");
 const ClassMapper = require("../mappers/ClassMapper");
 const StudentMapper = require("../mappers/StudentMapper");
 const fs = require("fs");
@@ -21,6 +22,7 @@ class SyncService {
 
     const classesService = new ClassesService(client);
     const rosterService = new RosterService(client);
+    const familyService = new FamilyService(client);
 
     // 2. Fetch class list
     const classList = await classesService.getClassList();
@@ -55,7 +57,26 @@ class SyncService {
       }
     }
 
-    // 4. Save to JSON
+    // 4. Extract unique family IDs from all rosters
+    const allStudents = classesWithRosters.flatMap((cls) => cls.roster);
+    const familyIds = [...new Set(allStudents.map((s) => s.familyId).filter(Boolean))];
+    this.logger.info(`Found ${familyIds.length} unique families`);
+
+    // 5. Batch fetch family data
+    const families = await familyService.getFamilies(familyIds);
+    const familyMap = new Map(
+      families.filter(Boolean).map((f) => [f.familyId, f])
+    );
+    this.logger.info(`Fetched ${familyMap.size} family records`);
+
+    // 6. Merge family data into student records
+    for (const cls of classesWithRosters) {
+      for (const student of cls.roster) {
+        student.family = familyMap.get(student.familyId) || null;
+      }
+    }
+
+    // 7. Save to JSON
     const output = {
       syncedAt: new Date().toISOString(),
       totalClasses: classesWithRosters.length,
