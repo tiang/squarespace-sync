@@ -136,4 +136,84 @@ describe("StudentMapper.transform", () => {
       expect(() => StudentMapper.transform(rawStudent)).toThrow("bad-date");
     });
   });
+
+  describe("field transformation", () => {
+    test("maps id to studentId", () => {
+      const rawStudent = makeStudent({ id: 999 });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.studentId).toBe(999);
+    });
+
+    test("maps all 14 fields correctly", () => {
+      const rawStudent = makeStudent();
+      const result = StudentMapper.transform(rawStudent);
+
+      expect(result.studentId).toBe(338);
+      expect(result.enrollmentId).toBe(327);
+      expect(result.firstName).toBe("Alice");
+      expect(result.lastName).toBe("Smith");
+      expect(result.age).toBe("7y");
+      expect(result.gender).toBe("F");
+      expect(result.enrollmentType).toBe("ACTIVE");
+      expect(result.startDate).toBe("2026-02-08");
+      expect(result.dropDate).toBeNull();
+      expect(result.familyName).toBe("Smith Family");
+      expect(result.familyId).toBe(254);
+      expect(result.birthDate).toBe("2019-05-15");
+      expect(result.healthConcerns).toBeNull();
+      expect(result.flags).toBeDefined();
+    });
+
+    test("defaults age to null when missing", () => {
+      const rawStudent = makeStudent({ age: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.age).toBeNull();
+    });
+
+    test("defaults gender to null when missing", () => {
+      const rawStudent = makeStudent({ gender: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.gender).toBeNull();
+    });
+
+    test("defaults enrollmentType to null when type missing", () => {
+      const rawStudent = makeStudent({ type: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.enrollmentType).toBeNull();
+    });
+
+    test("defaults dropDate to null when missing", () => {
+      const rawStudent = makeStudent({ dropDate: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.dropDate).toBeNull();
+    });
+
+    test("defaults familyName to null when missing", () => {
+      const rawStudent = makeStudent({ familyName: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.familyName).toBeNull();
+    });
+
+    test("defaults familyId to null when missing", () => {
+      const rawStudent = makeStudent({ familyId: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.familyId).toBeNull();
+    });
+
+    test("defaults healthConcerns to null when missing", () => {
+      const rawStudent = makeStudent({ healthConcerns: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.healthConcerns).toBeNull();
+    });
+
+    test("preserves date strings without modification", () => {
+      const rawStudent = makeStudent({
+        startDate: "2026-02-08",
+        birthDate: "2019-05-15",
+      });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.startDate).toBe("2026-02-08");
+      expect(result.birthDate).toBe("2019-05-15");
+    });
+  });
 });
