@@ -13,10 +13,16 @@
     "dashboard:dev": "concurrently \"node dashboard/server/index.js\" \"cd dashboard && npm run dev\"",
     "dashboard:build": "cd dashboard && npm run build",
     "dashboard:start": "node dashboard/server/index.js",
-    "install:all": "npm run sync:install && npm run dashboard:install"
+    "install:all": "npm run sync:install && npm run dashboard:install",
+    "iclasspro": "node iclasspro/index.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
     "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.5",
+    "dotenv": "^17.3.1",
+    "winston": "^3.19.0"
   }
 }
