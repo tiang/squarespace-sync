@@ -81,4 +81,59 @@ describe("StudentMapper.transform", () => {
       expect(() => StudentMapper.transform(rawStudent)).toThrow("Bob Jones");
     });
   });
+
+  describe("date validation", () => {
+    test("accepts valid ISO date for startDate", () => {
+      const rawStudent = makeStudent({ startDate: "2026-01-15" });
+      expect(() => StudentMapper.transform(rawStudent)).not.toThrow();
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.startDate).toBe("2026-01-15");
+    });
+
+    test("accepts valid ISO date for birthDate", () => {
+      const rawStudent = makeStudent({ birthDate: "2018-03-20" });
+      expect(() => StudentMapper.transform(rawStudent)).not.toThrow();
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.birthDate).toBe("2018-03-20");
+    });
+
+    test("throws on invalid date format for startDate", () => {
+      const rawStudent = makeStudent({ startDate: "not-a-date" });
+      expect(() => StudentMapper.transform(rawStudent)).toThrow(
+        "Invalid date format for 'startDate'"
+      );
+    });
+
+    test("throws on invalid date format for birthDate", () => {
+      const rawStudent = makeStudent({ birthDate: "invalid" });
+      expect(() => StudentMapper.transform(rawStudent)).toThrow(
+        "Invalid date format for 'birthDate'"
+      );
+    });
+
+    test("accepts null for startDate (optional)", () => {
+      const rawStudent = makeStudent({ startDate: null });
+      expect(() => StudentMapper.transform(rawStudent)).not.toThrow();
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.startDate).toBeNull();
+    });
+
+    test("accepts null for birthDate (optional)", () => {
+      const rawStudent = makeStudent({ birthDate: null });
+      expect(() => StudentMapper.transform(rawStudent)).not.toThrow();
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.birthDate).toBeNull();
+    });
+
+    test("accepts empty string for dates (treated as optional)", () => {
+      const rawStudent = makeStudent({ startDate: "", birthDate: "" });
+      expect(() => StudentMapper.transform(rawStudent)).not.toThrow();
+    });
+
+    test("error message specifies which date field is invalid", () => {
+      const rawStudent = makeStudent({ birthDate: "bad-date" });
+      expect(() => StudentMapper.transform(rawStudent)).toThrow("birthDate");
+      expect(() => StudentMapper.transform(rawStudent)).toThrow("bad-date");
+    });
+  });
 });
