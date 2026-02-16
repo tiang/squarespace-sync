@@ -20,7 +20,7 @@ class FamilyService {
   async getFamily(familyId) {
     try {
       const response = await this.client.get(`/family/${familyId}`);
-      return FamilyMapper.transform(response.data);
+      return FamilyMapper.transform(response.data.data);
     } catch (error) {
       throw new Error(
         `Failed to fetch family ${familyId}: ${error.message}`
