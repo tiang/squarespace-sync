@@ -1,6 +1,8 @@
 const authService = require("./auth");
 const ClassesService = require("./classes");
 const RosterService = require("./roster");
+const ClassMapper = require("../mappers/ClassMapper");
+const StudentMapper = require("../mappers/StudentMapper");
 const fs = require("fs");
 const path = require("path");
 
@@ -38,27 +40,14 @@ class SyncService {
       }
 
       try {
-        const roster = await rosterService.getRoster(cls.value, today, tsId);
-        const scheduleKey = Object.keys(cls.durationSchedule || {})[0];
-        const scheduleDisplay = cls.durationSchedule?.[scheduleKey] || "";
+        const rawRoster = await rosterService.getRoster(cls.value, today, tsId);
 
         classesWithRosters.push({
-          id: cls.value,
-          name: cls.name,
-          schedule: scheduleDisplay,
-          room: cls.room,
-          instructors: cls.instructor || [],
-          occupancy: {
-            active: cls.occupancy?.active || 0,
-            max: cls.occupancy?.max || 0,
-            openings: cls.occupancy?.openings || 0,
-            seatsFilled: cls.occupancy?.seatsFilled || 0,
-            waitlist: cls.occupancy?.waitlist || 0,
-          },
-          roster,
+          ...ClassMapper.transform(cls),
+          roster: rawRoster.map((s) => StudentMapper.transform(s)),
         });
 
-        this.logger.info(`  ${cls.name}: ${roster.length} students enrolled`);
+        this.logger.info(`  ${cls.name}: ${rawRoster.length} students enrolled`);
       } catch (err) {
         this.logger.error(
           `Failed to fetch roster for ${cls.name}: ${err.message}`
