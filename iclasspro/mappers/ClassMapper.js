@@ -12,7 +12,7 @@ class ClassMapper {
    */
   static transform(rawClass) {
     // Validate required fields
-    if (!rawClass.value) {
+    if (rawClass.value === undefined || rawClass.value === null) {
       throw new Error(
         `ClassMapper: Missing required field 'id' in class '${rawClass.name || "unknown"}'`
       );
