@@ -37,7 +37,7 @@ class AuthService {
 
     const icpCookie = cookies
       .map((c) => c.split(";")[0])
-      .find((c) => c.startsWith("ICLASSPRO="));
+      .findLast((c) => c.startsWith("ICLASSPRO="));
 
     if (!icpCookie) {
       throw new Error("Login failed: ICLASSPRO cookie not found");
