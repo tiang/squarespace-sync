@@ -38,3 +38,7 @@ Required: `SQUARESPACE_API_KEY`, `SQUARESPACE_STORE_ID`, `AIRTABLE_API_KEY`, `AI
 Optional: `AIRTABLE_TABLE_NAME` (default: "Orders"), `SYNC_INTERVAL_MINUTES` (default: 60, 0 = one-time), `INITIAL_SYNC_DAYS` (default: 30)
 
 Copy `.env.example` to `.env` to configure.
+
+## Workflow Preferences
+
+**Implementation Execution:** Always use **subagent-driven execution** (superpowers:subagent-driven-development) when executing implementation plans. Stay in the current session with fresh subagent per task and code review between tasks for fast iteration and quality gates.
