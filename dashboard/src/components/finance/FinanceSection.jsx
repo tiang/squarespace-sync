@@ -13,9 +13,9 @@ export default function FinanceSection({ orders }) {
   return (
     <div>
       <div className="stats-row">
-        <StatCard title="Total Revenue" value={formatDollars(totalRevenue)} />
-        <StatCard title="Average Order Value" value={formatDollars(avgOrderValue)} />
-        <StatCard title="Total Orders" value={orders.length} />
+        <StatCard title="Total Revenue" value={formatDollars(totalRevenue)} icon={"\uD83D\uDCB5"} accent="teal" />
+        <StatCard title="Average Order Value" value={formatDollars(avgOrderValue)} icon={"\uD83D\uDCC8"} accent="orange" />
+        <StatCard title="Total Orders" value={orders.length} icon={"\uD83D\uDCE6"} accent="primary" />
       </div>
       <RevenueOverview orders={orders} />
       <RevenueTrends orders={orders} />

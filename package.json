@@ -7,7 +7,7 @@
     "start": "node sync/index.js",
     "dev": "nodemon sync/index.js",
     "test": "cd sync && npx jest",
-    "test:coverage": "cd sync && npx jest --coverage",
+    "test:coverage": "cd sync && npx jest - -coverage",
     "sync:install": "cd sync && npm install",
     "dashboard:install": "cd dashboard && npm install",
     "dashboard:dev": "concurrently \"node dashboard/server/index.js\" \"cd dashboard && npm run dev\"",

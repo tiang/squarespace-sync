@@ -4,7 +4,9 @@ import { fetchOrders, refreshOrders } from "../api";
 export function useOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const [lastSynced, setLastSynced] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -12,6 +14,7 @@ export function useOrders() {
     try {
       const data = await fetchOrders();
       setOrders(data);
+      setLastSynced(new Date());
     } catch (err) {
       setError(err.message);
     } finally {
@@ -20,15 +23,16 @@ export function useOrders() {
   }, []);
 
   const refresh = useCallback(async () => {
-    setLoading(true);
+    setRefreshing(true);
     setError(null);
     try {
       const data = await refreshOrders();
       setOrders(data);
+      setLastSynced(new Date());
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
@@ -36,5 +40,5 @@ export function useOrders() {
     load();
   }, [load]);
 
-  return { orders, loading, error, refresh };
+  return { orders, loading, refreshing, error, refresh, lastSynced };
 }

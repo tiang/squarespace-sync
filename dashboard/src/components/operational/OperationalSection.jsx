@@ -78,7 +78,10 @@ export default function OperationalSection({ orders }) {
         </div>
       ))}
       {locationGroups.length === 0 && (
-        <p style={{ color: "#888", padding: 20 }}>No classes found for this term.</p>
+        <div className="empty-state">
+          <div className="empty-icon">{"\uD83D\uDCDA"}</div>
+          <p>No classes found for this term.</p>
+        </div>
       )}
       <SkuAudit orders={programOrders} />
     </div>

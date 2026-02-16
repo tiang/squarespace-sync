@@ -14,9 +14,9 @@ export default function EnrollmentSection({ orders }) {
   return (
     <div>
       <div className="stats-row">
-        <StatCard title="Total Students" value={totalStudents} />
-        <StatCard title="Active Courses" value={activeCourses} />
-        <StatCard title="Average Age" value={avgAge} />
+        <StatCard title="Total Students" value={totalStudents} icon={"\uD83D\uDC69\u200D\uD83C\uDF93"} accent="primary" />
+        <StatCard title="Active Courses" value={activeCourses} icon={"\uD83D\uDCDA"} accent="purple" />
+        <StatCard title="Average Age" value={avgAge} icon={"\uD83C\uDF82"} accent="pink" />
       </div>
       <EnrollmentCounts orders={orders} />
       <EnrollmentTrends orders={orders} />

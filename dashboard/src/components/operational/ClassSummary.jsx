@@ -9,14 +9,14 @@ export default function ClassSummary({ classes }) {
         <div key={cls.className} className="class-card">
           <h4>{cls.className}</h4>
           <div className="class-stats">
-            <span>{cls.students.length} students</span>
+            <span>{"\uD83D\uDC64"} {cls.students.length} students</span>
             {cls.medicalCount > 0 && (
               <span className="badge badge-warning">
-                {cls.medicalCount} medical
+                {"\u26A0\uFE0F"} {cls.medicalCount} medical
               </span>
             )}
             <span className="badge badge-success">
-              Photo: {cls.photoYes}Y / {cls.photoNo}N
+              {"\uD83D\uDCF7"} Photo: {cls.photoYes}Y / {cls.photoNo}N
             </span>
           </div>
         </div>
