@@ -17,10 +17,42 @@ describe("FamilyService", () => {
     it("should fetch and transform a single family", async () => {
       const mockResponse = {
         data: {
-          id: 664,
-          name: "Test Family",
-          email: "test@example.com",
-          phone: "1234567890",
+          data: {
+            id: 664,
+            guardians: [
+              {
+                id: 1234,
+                firstName: "John",
+                lastName: "Smith",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [
+              {
+                email: "john.smith@example.com",
+                isPrimary: true,
+                guardianId: 1234,
+              },
+            ],
+            phones: [
+              {
+                phoneSearch: "1234567890",
+                isPrimary: true,
+                guardianId: 1234,
+              },
+            ],
+            addresses: [
+              {
+                street1: "123 Main St",
+                street2: "",
+                city: "Singapore",
+                state: "SG",
+                zip: "123456",
+                isPrimary: true,
+              },
+            ],
+          },
         },
       };
 
@@ -45,10 +77,66 @@ describe("FamilyService", () => {
   describe("getFamilies", () => {
     it("should fetch multiple families in parallel", async () => {
       const mockResponse1 = {
-        data: { id: 664, name: "Family 1" },
+        data: {
+          data: {
+            id: 664,
+            guardians: [
+              {
+                id: 1234,
+                firstName: "John",
+                lastName: "Smith",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [
+              {
+                email: "john.smith@example.com",
+                isPrimary: true,
+                guardianId: 1234,
+              },
+            ],
+            phones: [
+              {
+                phoneSearch: "1234567890",
+                isPrimary: true,
+                guardianId: 1234,
+              },
+            ],
+            addresses: [],
+          },
+        },
       };
       const mockResponse2 = {
-        data: { id: 665, name: "Family 2" },
+        data: {
+          data: {
+            id: 665,
+            guardians: [
+              {
+                id: 5678,
+                firstName: "Jane",
+                lastName: "Doe",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [
+              {
+                email: "jane.doe@example.com",
+                isPrimary: true,
+                guardianId: 5678,
+              },
+            ],
+            phones: [
+              {
+                phoneSearch: "0987654321",
+                isPrimary: true,
+                guardianId: 5678,
+              },
+            ],
+            addresses: [],
+          },
+        },
       };
 
       mockClient.get
@@ -65,7 +153,23 @@ describe("FamilyService", () => {
 
     it("should deduplicate family IDs", async () => {
       const mockResponse = {
-        data: { id: 664, name: "Family 1" },
+        data: {
+          data: {
+            id: 664,
+            guardians: [
+              {
+                id: 1234,
+                firstName: "John",
+                lastName: "Smith",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [],
+            phones: [],
+            addresses: [],
+          },
+        },
       };
 
       mockClient.get.mockResolvedValue(mockResponse);
@@ -78,7 +182,23 @@ describe("FamilyService", () => {
 
     it("should filter out null/undefined IDs", async () => {
       const mockResponse = {
-        data: { id: 664, name: "Family 1" },
+        data: {
+          data: {
+            id: 664,
+            guardians: [
+              {
+                id: 1234,
+                firstName: "John",
+                lastName: "Smith",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [],
+            phones: [],
+            addresses: [],
+          },
+        },
       };
 
       mockClient.get.mockResolvedValue(mockResponse);
@@ -91,7 +211,23 @@ describe("FamilyService", () => {
 
     it("should continue on individual failures", async () => {
       const mockResponse1 = {
-        data: { id: 664, name: "Family 1" },
+        data: {
+          data: {
+            id: 664,
+            guardians: [
+              {
+                id: 1234,
+                firstName: "John",
+                lastName: "Smith",
+                isPrimary: true,
+                relationshipId: 1,
+              },
+            ],
+            emails: [],
+            phones: [],
+            addresses: [],
+          },
+        },
       };
 
       mockClient.get

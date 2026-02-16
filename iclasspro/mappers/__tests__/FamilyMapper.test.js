@@ -1,17 +1,69 @@
 const FamilyMapper = require("../FamilyMapper");
 const FamilyDTO = require("../../dto/FamilyDTO");
-const fs = require("fs");
-const path = require("path");
+
+// Helper to build a complete family object for testing
+function makeFamilyMock(overrides = {}) {
+  return {
+    id: 664,
+    guardians: [
+      {
+        id: 1234,
+        firstName: "John",
+        lastName: "Smith",
+        isPrimary: true,
+        relationshipId: 1,
+      },
+      {
+        id: 1235,
+        firstName: "Jane",
+        lastName: "Smith",
+        isPrimary: false,
+        relationshipId: 2,
+      },
+    ],
+    emails: [
+      {
+        email: "john.smith@example.com",
+        isPrimary: true,
+        guardianId: 1234,
+      },
+      {
+        email: "jane.smith@example.com",
+        isPrimary: false,
+        guardianId: 1235,
+      },
+    ],
+    phones: [
+      {
+        phoneSearch: "1234567890",
+        isPrimary: true,
+        guardianId: 1234,
+      },
+      {
+        phoneSearch: "0987654321",
+        isPrimary: false,
+        guardianId: 1235,
+      },
+    ],
+    addresses: [
+      {
+        street1: "123 Main St",
+        street2: "Apt 4B",
+        city: "Singapore",
+        state: "SG",
+        zip: "123456",
+        isPrimary: true,
+      },
+    ],
+    ...overrides,
+  };
+}
 
 describe("FamilyMapper", () => {
-  let sampleFamilyResponse;
   let sampleFamily;
 
-  beforeAll(() => {
-    // Load the actual API response saved in Task 1
-    const samplePath = path.join(__dirname, "../../data/family-sample.json");
-    sampleFamilyResponse = JSON.parse(fs.readFileSync(samplePath, "utf8"));
-    sampleFamily = sampleFamilyResponse.data; // Extract data from wrapper
+  beforeEach(() => {
+    sampleFamily = makeFamilyMock();
   });
 
   describe("transform", () => {
