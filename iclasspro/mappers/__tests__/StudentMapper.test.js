@@ -216,4 +216,48 @@ describe("StudentMapper.transform", () => {
       expect(result.birthDate).toBe("2019-05-15");
     });
   });
+
+  describe("flags handling", () => {
+    test("maps all 5 flag fields", () => {
+      const rawStudent = makeStudent({
+        flags: {
+          medical: true,
+          allowImage: false,
+          trial: true,
+          waitlist: false,
+          makeup: true,
+        },
+      });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.flags.medical).toBe(true);
+      expect(result.flags.allowImage).toBe(false);
+      expect(result.flags.trial).toBe(true);
+      expect(result.flags.waitlist).toBe(false);
+      expect(result.flags.makeup).toBe(true);
+    });
+
+    test("defaults missing flags to false", () => {
+      const rawStudent = makeStudent({
+        flags: { medical: true }, // Only medical provided
+      });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.flags.medical).toBe(true);
+      expect(result.flags.allowImage).toBe(false);
+      expect(result.flags.trial).toBe(false);
+      expect(result.flags.waitlist).toBe(false);
+      expect(result.flags.makeup).toBe(false);
+    });
+
+    test("handles missing entire flags object", () => {
+      const rawStudent = makeStudent({ flags: undefined });
+      const result = StudentMapper.transform(rawStudent);
+      expect(result.flags).toEqual({
+        medical: false,
+        allowImage: false,
+        trial: false,
+        waitlist: false,
+        makeup: false,
+      });
+    });
+  });
 });
