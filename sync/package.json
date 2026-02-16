@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Synchronize Squarespace orders with Airtable",
   "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
   "dependencies": {
     "airtable": "^0.12.2",
     "axios": "^1.6.7",
