@@ -7,7 +7,7 @@
 class FamilyDTO {
   /**
    * @param {number} familyId - Family ID
-   * @param {string} familyName - Family name
+   * @param {string|null} familyName - Family name
    * @param {string|null} primaryEmail - Primary email
    * @param {string|null} primaryPhone - Primary phone
    * @param {Array<Object>} guardians - Array of guardian objects
