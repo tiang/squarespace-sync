@@ -137,4 +137,7 @@ dist
 .pnp.*
 
 # Service account credentials
-src/config/credentials.json
+config/credentials.json
+
+# Dashboard build output
+dashboard/dist

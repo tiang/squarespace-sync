@@ -1,22 +1,22 @@
 {
-  "name": "squarespace-sync",
+  "name": "squarespace-sync-root",
   "version": "1.0.0",
-  "description": "Synchronize Squarespace orders with Airtable",
-  "main": "src/index.js",
+  "description": "Squarespace-Airtable sync and dashboard monorepo",
+  "private": true,
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
-  },
-  "dependencies": {
-    "airtable": "^0.12.2",
-    "axios": "^1.6.7",
-    "dotenv": "^16.4.5",
-    "winston": "^3.11.0"
+    "start": "node sync/index.js",
+    "dev": "nodemon sync/index.js",
+    "test": "cd sync && npx jest",
+    "test:coverage": "cd sync && npx jest - -coverage",
+    "sync:install": "cd sync && npm install",
+    "dashboard:install": "cd dashboard && npm install",
+    "dashboard:dev": "concurrently \"node dashboard/server/index.js\" \"cd dashboard && npm run dev\"",
+    "dashboard:build": "cd dashboard && npm run build",
+    "dashboard:start": "node dashboard/server/index.js",
+    "install:all": "npm run sync:install && npm run dashboard:install"
   },
   "devDependencies": {
-    "jest": "^30.2.0",
+    "concurrently": "^9.1.0",
     "nodemon": "^3.1.0"
   }
 }
