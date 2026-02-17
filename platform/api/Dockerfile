@@ -7,7 +7,7 @@ COPY package*.json ./
 FROM base AS dev
 RUN npm install
 COPY . .
-RUN npx prisma generate
+# Volume mount overlays /app at runtime, so generate runs at container start instead of build time.
 CMD ["sh", "-c", "npx prisma generate && npm run dev"]
 
 FROM base AS prod
