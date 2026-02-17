@@ -74,6 +74,8 @@ describe("FamilyMapper", () => {
       expect(result.familyId).toBe(664);
       expect(result.familyName).toBeTruthy();
       expect(result.guardians).toBeInstanceOf(Array);
+      expect(result.guardians[0].guardianId).toBe(1234);
+      expect(result.guardians[1].guardianId).toBe(1235);
     });
 
     it("should throw error if familyId is missing", () => {
