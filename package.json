@@ -14,7 +14,9 @@
     "dashboard:build": "cd dashboard && npm run build",
     "dashboard:start": "node dashboard/server/index.js",
     "install:all": "npm run sync:install && npm run dashboard:install",
-    "iclasspro": "node iclasspro/index.js"
+    "iclasspro": "node iclasspro/index.js",
+    "iclasspro:airtable": "node iclasspro/commands/sync-airtable.js",
+    "iclasspro:full": "node iclasspro/commands/sync-full.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
