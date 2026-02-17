@@ -1,8 +1,8 @@
-require("dotenv").config();
+require("dotenv").config({ path: require("path").join(__dirname, "..", ".env") });
 
 const config = {
   iclasspro: {
-    account: process.env.ICLASSPRO_ACCOUNT,
+    account: process.env.ICLASSPRO_ACCOUNT || "rocketacademy",
     username: process.env.ICLASSPRO_USERNAME,
     password: process.env.ICLASSPRO_PASSWORD,
   },
@@ -18,7 +18,6 @@ const config = {
 };
 
 const requiredEnvVars = [
-  "ICLASSPRO_ACCOUNT",
   "ICLASSPRO_USERNAME",
   "ICLASSPRO_PASSWORD",
   "AIRTABLE_API_KEY",
