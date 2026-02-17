@@ -1,0 +1,40 @@
+include:
+  - docker-compose.infra.yml
+
+services:
+  api:
+    build:
+      context: ./api
+      target: dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./api/src:/app/src
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-localdev}@postgres:5432/${POSTGRES_DB:-platform}
+      FIRESTORE_EMULATOR_HOST: firebase:8080
+      FIREBASE_AUTH_EMULATOR_HOST: firebase:9099
+      GCS_API_ENDPOINT: http://gcs:4443
+      GCLOUD_PROJECT: ${GCLOUD_PROJECT:-rocket-academy-local}
+    depends_on:
+      firebase:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      gcs:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      target: dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web/src:/app/src
+      - ./web/index.html:/app/index.html
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      - api
