@@ -231,13 +231,14 @@ class IClassProAirtableService {
     const guardianIdMap = await this.upsertGuardians(classes, familyIdMap);
     const studentIdMap = await this.upsertStudents(classes, familyIdMap);
     const classIdMap = await this.upsertClasses(classes);
-    await this.upsertEnrollments(classes, studentIdMap, classIdMap);
+    const enrollmentIdMap = await this.upsertEnrollments(classes, studentIdMap, classIdMap);
 
     return {
       families: familyIdMap.size,
       guardians: guardianIdMap.size,
       students: studentIdMap.size,
       classes: classIdMap.size,
+      enrollments: enrollmentIdMap.size,
     };
   }
 }
