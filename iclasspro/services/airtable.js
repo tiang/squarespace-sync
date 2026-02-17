@@ -179,17 +179,22 @@ class IClassProAirtableService {
   }
 
   /**
-   * Upsert all classes. Returns { idMap, failed }.
+   * Upsert all classes (linked to enrolled students). Returns { idMap, failed }.
    */
-  async upsertClasses(classes) {
+  async upsertClasses(classes, studentIdMap) {
     return this.bulkUpsert(
       config.airtable.classesTable,
       classes,
-      (cls) => ({
-        keyField: "Class ID",
-        keyValue: String(cls.id),
-        fields: ClassDTO.toAirtableFields(cls),
-      }),
+      (cls) => {
+        const studentRecordIds = (cls.roster || [])
+          .map((s) => studentIdMap.get(s.studentId))
+          .filter(Boolean);
+        return {
+          keyField: "Class ID",
+          keyValue: String(cls.id),
+          fields: ClassDTO.toAirtableFields(cls, studentRecordIds),
+        };
+      },
       (cls) => cls.id
     );
   }
@@ -239,7 +244,7 @@ class IClassProAirtableService {
     const familyResult = await this.upsertFamilies(classes);
     const guardianResult = await this.upsertGuardians(classes, familyResult.idMap);
     const studentResult = await this.upsertStudents(classes, familyResult.idMap);
-    const classResult = await this.upsertClasses(classes);
+    const classResult = await this.upsertClasses(classes, studentResult.idMap);
     const enrollmentResult = await this.upsertEnrollments(
       classes,
       studentResult.idMap,

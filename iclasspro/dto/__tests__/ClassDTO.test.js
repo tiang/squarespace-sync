@@ -92,5 +92,19 @@ describe("ClassDTO", () => {
       expect(fields["Instructors"]).toBe("");
       expect(fields["Schedule"]).toBe("");
     });
+
+    it("includes ICP_Students when studentAirtableRecordIds are provided", () => {
+      const fields = ClassDTO.toAirtableFields(cls, ["recAAA", "recBBB"]);
+
+      expect(fields["ICP_Students"]).toEqual(["recAAA", "recBBB"]);
+    });
+
+    it("omits ICP_Students when no student record IDs are provided", () => {
+      const fields = ClassDTO.toAirtableFields(cls);
+      expect(fields["ICP_Students"]).toBeUndefined();
+
+      const fieldsEmpty = ClassDTO.toAirtableFields(cls, []);
+      expect(fieldsEmpty["ICP_Students"]).toBeUndefined();
+    });
   });
 });
