@@ -1282,9 +1282,9 @@ Expected output:
   - ClassDTO: 3 tests
   - StudentDTO: 3 tests
   - ClassMapper: 26 tests
-  - StudentMapper: 33 tests
+  - StudentMapper: 32 tests
 - All existing sync tests still passing (no regressions)
-- Total new tests: 65 (6 DTO + 59 Mapper)
+- Total new tests: 64 (6 DTO + 58 Mapper)
 
 **Step 2: Verify test coverage manually**
 

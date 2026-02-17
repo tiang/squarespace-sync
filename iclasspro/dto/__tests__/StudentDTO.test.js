@@ -103,4 +103,73 @@ describe("StudentDTO", () => {
     expect(dto.flags).toBe(flags); // Same reference
     expect(dto.flags.medical).toBe(true);
   });
+
+  describe("Airtable field methods", () => {
+    let student;
+
+    beforeAll(() => {
+      student = new StudentDTO(
+        338,           // studentId
+        327,           // enrollmentId
+        "Cullen",      // firstName
+        "Tan",         // lastName
+        "7y",          // age
+        "M",           // gender
+        "ACTIVE",      // enrollmentType
+        "2026-02-08",  // startDate
+        null,          // dropDate
+        "Tan Xiaotian", // familyName
+        254,           // familyId
+        "2019-01-01",  // birthDate
+        null,          // healthConcerns
+        { medical: false, allowImage: true, trial: false, waitlist: false, makeup: false }
+      );
+    });
+
+    describe("toStudentAirtableFields", () => {
+      it("maps student fields to Airtable field names with family link", () => {
+        const fields = StudentDTO.toStudentAirtableFields(student, "recFAM123");
+
+        expect(fields["Student ID"]).toBe("338");
+        expect(fields["First Name"]).toBe("Cullen");
+        expect(fields["Last Name"]).toBe("Tan");
+        expect(fields["Birth Date"]).toBe("2019-01-01");
+        expect(fields["Gender"]).toBe("M");
+        expect(fields["Health Concerns"]).toBe("");
+        expect(fields["Family"]).toEqual(["recFAM123"]);
+      });
+
+      it("omits Family link when no airtable record ID provided", () => {
+        const fields = StudentDTO.toStudentAirtableFields(student, null);
+        expect(fields["Family"]).toEqual([]);
+      });
+    });
+
+    describe("toEnrollmentAirtableFields", () => {
+      it("maps enrollment fields to Airtable field names with student and class links", () => {
+        const fields = StudentDTO.toEnrollmentAirtableFields(
+          student,
+          "recSTU456",
+          "recCLS789"
+        );
+
+        expect(fields["Enrollment ID"]).toBe("327");
+        expect(fields["Enrollment Type"]).toBe("ACTIVE");
+        expect(fields["Start Date"]).toBe("2026-02-08");
+        expect(fields["Drop Date"]).toBe("");
+        expect(fields["Medical"]).toBe(false);
+        expect(fields["Allow Image"]).toBe(true);
+        expect(fields["Trial"]).toBe(false);
+        expect(fields["Waitlist"]).toBe(false);
+        expect(fields["Student"]).toEqual(["recSTU456"]);
+        expect(fields["Class"]).toEqual(["recCLS789"]);
+      });
+
+      it("omits links when no airtable record IDs provided", () => {
+        const fields = StudentDTO.toEnrollmentAirtableFields(student, null, null);
+        expect(fields["Student"]).toEqual([]);
+        expect(fields["Class"]).toEqual([]);
+      });
+    });
+  });
 });

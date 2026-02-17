@@ -57,6 +57,50 @@ class StudentDTO {
     this.healthConcerns = healthConcerns;
     this.flags = flags;
   }
+
+  /**
+   * Map student person fields to Airtable field names for ICP_Students table
+   * @param {StudentDTO} student
+   * @param {string|null} familyAirtableRecordId - Airtable record ID of the parent Family
+   * @returns {Object} Airtable fields object
+   */
+  static toStudentAirtableFields(student, familyAirtableRecordId) {
+    return {
+      "Student ID": String(student.studentId),
+      "First Name": student.firstName || "",
+      "Last Name": student.lastName || "",
+      "Birth Date": student.birthDate || "",
+      "Gender": student.gender || "",
+      "Health Concerns": student.healthConcerns || "",
+      "Family": familyAirtableRecordId ? [familyAirtableRecordId] : [],
+    };
+  }
+
+  /**
+   * Map enrollment fields to Airtable field names for ICP_Enrollments table
+   * @param {StudentDTO} student
+   * @param {string|null} studentAirtableRecordId - Airtable record ID of the Student
+   * @param {string|null} classAirtableRecordId - Airtable record ID of the Class
+   * @returns {Object} Airtable fields object
+   */
+  static toEnrollmentAirtableFields(
+    student,
+    studentAirtableRecordId,
+    classAirtableRecordId
+  ) {
+    return {
+      "Enrollment ID": String(student.enrollmentId),
+      "Enrollment Type": student.enrollmentType || "",
+      "Start Date": student.startDate || "",
+      "Drop Date": student.dropDate || "",
+      "Medical": student.flags?.medical || false,
+      "Allow Image": student.flags?.allowImage || false,
+      "Trial": student.flags?.trial || false,
+      "Waitlist": student.flags?.waitlist || false,
+      "Student": studentAirtableRecordId ? [studentAirtableRecordId] : [],
+      "Class": classAirtableRecordId ? [classAirtableRecordId] : [],
+    };
+  }
 }
 
 module.exports = StudentDTO;
