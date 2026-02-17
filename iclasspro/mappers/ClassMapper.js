@@ -33,11 +33,11 @@ class ClassMapper {
 
     // Extract occupancy with defaults
     const occupancy = {
-      active: rawClass.occupancy?.active || 0,
-      max: rawClass.occupancy?.max || 0,
-      openings: rawClass.occupancy?.openings || 0,
-      seatsFilled: rawClass.occupancy?.seatsFilled || 0,
-      waitlist: rawClass.occupancy?.waitlist || 0,
+      active: rawClass.occupancy?.active ?? 0,
+      max: rawClass.occupancy?.max ?? 0,
+      openings: rawClass.occupancy?.openings ?? 0,
+      seatsFilled: rawClass.occupancy?.seatsFilled ?? 0,
+      waitlist: rawClass.occupancy?.waitlist ?? 0,
     };
 
     return new ClassDTO(
