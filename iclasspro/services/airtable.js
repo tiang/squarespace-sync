@@ -8,7 +8,8 @@ const StudentDTO = require("../dto/StudentDTO");
 const CHUNK_SIZE = 10;
 
 class IClassProAirtableService {
-  constructor() {
+  constructor(logger = console) {
+    this.logger = logger;
     this.base = new Airtable({ apiKey: config.airtable.apiKey }).base(
       config.airtable.baseId
     );
@@ -20,9 +21,10 @@ class IClassProAirtableService {
    */
   async findRecord(tableName, fieldName, value) {
     try {
+      const escaped = String(value).replace(/'/g, "\\'");
       const records = await this.base(tableName)
         .select({
-          filterByFormula: `{${fieldName}} = '${value}'`,
+          filterByFormula: `{${fieldName}} = '${escaped}'`,
           maxRecords: 1,
         })
         .firstPage();
@@ -48,10 +50,11 @@ class IClassProAirtableService {
    * Upsert an array of items in chunks of 10.
    * mapper(item) must return { keyField, keyValue, fields }
    * getItemId(item) returns the item's own ID for the result map.
-   * Returns Map of { itemId -> airtableRecordId }
+   * Returns { idMap: Map<itemId -> airtableRecordId>, failed: number }
    */
   async bulkUpsert(tableName, items, mapper, getItemId) {
     const idMap = new Map();
+    let failed = 0;
 
     for (let i = 0; i < items.length; i += CHUNK_SIZE) {
       const chunk = items.slice(i, i + CHUNK_SIZE);
@@ -67,7 +70,7 @@ class IClassProAirtableService {
             );
             return { itemId: getItemId(item), airtableId: record.id };
           } catch (err) {
-            console.warn(
+            this.logger.warn(
               `Failed to upsert record in ${tableName}: ${err.message}`
             );
             return { itemId: getItemId(item), airtableId: null };
@@ -76,15 +79,19 @@ class IClassProAirtableService {
       );
 
       for (const { itemId, airtableId } of results) {
-        if (airtableId) idMap.set(itemId, airtableId);
+        if (airtableId) {
+          idMap.set(itemId, airtableId);
+        } else {
+          failed++;
+        }
       }
     }
 
-    return idMap;
+    return { idMap, failed };
   }
 
   /**
-   * Upsert all unique families. Returns { familyId -> airtableRecordId } Map.
+   * Upsert all unique families. Returns { idMap, failed }.
    */
   async upsertFamilies(classes) {
     const uniqueFamilies = new Map();
@@ -109,7 +116,7 @@ class IClassProAirtableService {
   }
 
   /**
-   * Upsert all guardians (linked to families). Returns { guardianId -> airtableRecordId } Map.
+   * Upsert all guardians (linked to families). Returns { idMap, failed }.
    */
   async upsertGuardians(classes, familyIdMap) {
     const uniqueGuardians = new Map();
@@ -144,7 +151,7 @@ class IClassProAirtableService {
   }
 
   /**
-   * Upsert all unique students (linked to families). Returns { studentId -> airtableRecordId } Map.
+   * Upsert all unique students (linked to families). Returns { idMap, failed }.
    */
   async upsertStudents(classes, familyIdMap) {
     const uniqueStudents = new Map();
@@ -172,7 +179,7 @@ class IClassProAirtableService {
   }
 
   /**
-   * Upsert all classes. Returns { classId -> airtableRecordId } Map.
+   * Upsert all classes. Returns { idMap, failed }.
    */
   async upsertClasses(classes) {
     return this.bulkUpsert(
@@ -188,19 +195,21 @@ class IClassProAirtableService {
   }
 
   /**
-   * Upsert all enrollments (linked to students + classes).
+   * Upsert all enrollments (linked to students + classes). Returns { idMap, failed }.
    */
   async upsertEnrollments(classes, studentIdMap, classIdMap) {
-    const enrollments = [];
+    const uniqueEnrollments = new Map();
     for (const cls of classes) {
       for (const student of cls.roster) {
-        enrollments.push({ student, classId: cls.id });
+        if (!uniqueEnrollments.has(student.enrollmentId)) {
+          uniqueEnrollments.set(student.enrollmentId, { student, classId: cls.id });
+        }
       }
     }
 
     return this.bulkUpsert(
       config.airtable.enrollmentsTable,
-      enrollments,
+      [...uniqueEnrollments.values()],
       ({ student, classId }) => ({
         keyField: "Enrollment ID",
         keyValue: String(student.enrollmentId),
@@ -217,7 +226,7 @@ class IClassProAirtableService {
   /**
    * Main entry point: sync all tables from a JSON file.
    * @param {string} jsonPath - Path to iclasspro-*.json file
-   * @returns {Object} Summary counts { families, guardians, students, classes, enrollments }
+   * @returns {Object} Summary counts per table: { succeeded, attempted }
    */
   async syncFromJson(jsonPath) {
     if (!fs.existsSync(jsonPath)) {
@@ -227,18 +236,27 @@ class IClassProAirtableService {
     const data = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
     const classes = data.classes || [];
 
-    const familyIdMap = await this.upsertFamilies(classes);
-    const guardianIdMap = await this.upsertGuardians(classes, familyIdMap);
-    const studentIdMap = await this.upsertStudents(classes, familyIdMap);
-    const classIdMap = await this.upsertClasses(classes);
-    const enrollmentIdMap = await this.upsertEnrollments(classes, studentIdMap, classIdMap);
+    const familyResult = await this.upsertFamilies(classes);
+    const guardianResult = await this.upsertGuardians(classes, familyResult.idMap);
+    const studentResult = await this.upsertStudents(classes, familyResult.idMap);
+    const classResult = await this.upsertClasses(classes);
+    const enrollmentResult = await this.upsertEnrollments(
+      classes,
+      studentResult.idMap,
+      classResult.idMap
+    );
+
+    const tally = (result) => ({
+      succeeded: result.idMap.size,
+      attempted: result.idMap.size + result.failed,
+    });
 
     return {
-      families: familyIdMap.size,
-      guardians: guardianIdMap.size,
-      students: studentIdMap.size,
-      classes: classIdMap.size,
-      enrollments: enrollmentIdMap.size,
+      families: tally(familyResult),
+      guardians: tally(guardianResult),
+      students: tally(studentResult),
+      classes: tally(classResult),
+      enrollments: tally(enrollmentResult),
     };
   }
 }

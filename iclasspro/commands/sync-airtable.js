@@ -1,26 +1,10 @@
 require("dotenv").config({ path: require("path").join(__dirname, "..", "..", ".env") });
 const fs = require("fs");
 const path = require("path");
-const winston = require("winston");
+const createLogger = require("../createLogger");
 const IClassProAirtableService = require("../services/airtable");
 
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.File({
-      filename: path.join(__dirname, "..", "..", "error.log"),
-      level: "error",
-    }),
-    new winston.transports.File({
-      filename: path.join(__dirname, "..", "..", "combined.log"),
-    }),
-    new winston.transports.Console({ format: winston.format.simple() }),
-  ],
-});
+const logger = createLogger();
 
 function getLatestJsonFile() {
   const dataDir = path.join(__dirname, "..", "data");
@@ -41,15 +25,23 @@ function getLatestJsonFile() {
   return path.join(dataDir, files[0]);
 }
 
+function formatCount({ succeeded, attempted }) {
+  return attempted === succeeded ? String(succeeded) : `${succeeded}/${attempted}`;
+}
+
 async function main() {
   const jsonPath = getLatestJsonFile();
   logger.info(`Syncing to Airtable from: ${jsonPath}`);
 
-  const service = new IClassProAirtableService();
+  const service = new IClassProAirtableService(logger);
   const summary = await service.syncFromJson(jsonPath);
 
   logger.info(
-    `Airtable sync complete: ${summary.families} families, ${summary.guardians} guardians, ${summary.students} students, ${summary.classes} classes, ${summary.enrollments} enrollments`
+    `Airtable sync complete: ${formatCount(summary.families)} families, ` +
+    `${formatCount(summary.guardians)} guardians, ` +
+    `${formatCount(summary.students)} students, ` +
+    `${formatCount(summary.classes)} classes, ` +
+    `${formatCount(summary.enrollments)} enrollments`
   );
 }
 

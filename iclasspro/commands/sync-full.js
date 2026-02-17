@@ -1,26 +1,13 @@
 require("dotenv").config({ path: require("path").join(__dirname, "..", "..", ".env") });
-const path = require("path");
-const winston = require("winston");
+const createLogger = require("../createLogger");
 const SyncService = require("../services/sync");
 const IClassProAirtableService = require("../services/airtable");
 
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  transports: [
-    new winston.transports.File({
-      filename: path.join(__dirname, "..", "..", "error.log"),
-      level: "error",
-    }),
-    new winston.transports.File({
-      filename: path.join(__dirname, "..", "..", "combined.log"),
-    }),
-    new winston.transports.Console({ format: winston.format.simple() }),
-  ],
-});
+const logger = createLogger();
+
+function formatCount({ succeeded, attempted }) {
+  return attempted === succeeded ? String(succeeded) : `${succeeded}/${attempted}`;
+}
 
 async function main() {
   // Step 1: Fetch from iClassPro API → save JSON
@@ -31,10 +18,14 @@ async function main() {
 
   // Step 2: Sync JSON → Airtable
   logger.info("Step 2/2: Syncing to Airtable...");
-  const airtableService = new IClassProAirtableService();
+  const airtableService = new IClassProAirtableService(logger);
   const summary = await airtableService.syncFromJson(jsonPath);
   logger.info(
-    `Step 2/2 complete: ${summary.families} families, ${summary.guardians} guardians, ${summary.students} students, ${summary.classes} classes, ${summary.enrollments} enrollments`
+    `Step 2/2 complete: ${formatCount(summary.families)} families, ` +
+    `${formatCount(summary.guardians)} guardians, ` +
+    `${formatCount(summary.students)} students, ` +
+    `${formatCount(summary.classes)} classes, ` +
+    `${formatCount(summary.enrollments)} enrollments`
   );
 }
 
