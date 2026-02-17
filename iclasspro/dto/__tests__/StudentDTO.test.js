@@ -156,7 +156,7 @@ describe("StudentDTO", () => {
         expect(fields["Enrollment ID"]).toBe("327");
         expect(fields["Enrollment Type"]).toBe("ACTIVE");
         expect(fields["Start Date"]).toBe("2026-02-08");
-        expect(fields["Drop Date"]).toBe("");
+        expect(fields["Drop Date"]).toBeNull();
         expect(fields["Medical"]).toBe(false);
         expect(fields["Allow Image"]).toBe(true);
         expect(fields["Trial"]).toBe(false);

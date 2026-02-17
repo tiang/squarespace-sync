@@ -17,12 +17,13 @@ npm start                   # Run Squarespace sync (one-time or recurring)
 npm run dev                 # Run with nodemon auto-reload
 
 # iClassPro sync
+npm run iclasspro:setup     # One-time: create the 5 Airtable tables (idempotent)
 npm run iclasspro           # Fetch from iClassPro API → save timestamped JSON to iclasspro/data/
 npm run iclasspro:airtable  # Sync latest saved JSON → Airtable (5 tables)
 npm run iclasspro:full      # Fetch from API + sync to Airtable in one step
 
 # Testing (Jest, iclasspro module only)
-cd iclasspro && npx jest
+npm run iclasspro:test
 ```
 
 ## Architecture
@@ -43,10 +44,11 @@ cd iclasspro && npx jest
 - **`iclasspro/index.js`** — Entry point for API fetch. Calls iClassPro API → saves timestamped JSON to `iclasspro/data/`.
 - **`iclasspro/config.js`** — Loads iClassPro and Airtable env vars.
 - **`iclasspro/createLogger.js`** — Shared Winston logger factory used by all commands.
-- **`iclasspro/dto/`** — DTOs for each entity: `FamilyDTO`, `GuardianDTO`, `StudentDTO`, `ClassDTO`. Each DTO includes static methods for mapping to Airtable fields.
-- **`iclasspro/mapper/IClassProMapper.js`** — Transforms raw iClassPro API response into an array of `StudentDTO` objects (one per roster entry per class).
+- **`iclasspro/dto/`** — DTOs for each entity: `FamilyDTO` (also handles guardian mapping via `toGuardianAirtableFields`), `StudentDTO`, `ClassDTO`. Each DTO includes static methods for mapping to Airtable fields.
+- **`iclasspro/mappers/`** — `FamilyMapper`, `StudentMapper`, `ClassMapper`. Transform raw iClassPro API response into DTO objects.
 - **`iclasspro/services/airtable.js`** — `IClassProAirtableService` with `findRecord`, `upsertRecord`, `bulkUpsert`, and `syncFromJson`. Supports logger injection via constructor (`logger = console` default).
 - **`iclasspro/services/sync.js`** — `SyncService` that calls the iClassPro API and saves JSON.
+- **`iclasspro/commands/create-airtable-tables.js`** — One-time setup: creates all 5 Airtable tables with correct field types and linked-record relationships (idempotent).
 - **`iclasspro/commands/sync-airtable.js`** — CLI for JSON → Airtable step only.
 - **`iclasspro/commands/sync-full.js`** — CLI for full API fetch + Airtable sync.
 
@@ -69,7 +71,7 @@ Required: `SQUARESPACE_API_KEY`, `SQUARESPACE_STORE_ID`, `AIRTABLE_API_KEY`, `AI
 Optional: `AIRTABLE_TABLE_NAME` (default: "Orders"), `SYNC_INTERVAL_MINUTES` (default: 60, 0 = one-time), `INITIAL_SYNC_DAYS` (default: 30)
 
 ### iClassPro sync
-Required: `ICLASSPRO_API_KEY`, `ICLASSPRO_BASE_URL`, `ICLASSPRO_USERNAME`, `ICLASSPRO_PASSWORD`, `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`
+Required: `ICLASSPRO_USERNAME`, `ICLASSPRO_PASSWORD`, `AIRTABLE_API_KEY`, `AIRTABLE_BASE_ID`
 Optional (table names): `ICLASSPRO_AIRTABLE_FAMILIES_TABLE`, `ICLASSPRO_AIRTABLE_GUARDIANS_TABLE`, `ICLASSPRO_AIRTABLE_STUDENTS_TABLE`, `ICLASSPRO_AIRTABLE_CLASSES_TABLE`, `ICLASSPRO_AIRTABLE_ENROLLMENTS_TABLE`
 
 Copy `.env.example` to `.env` to configure.
