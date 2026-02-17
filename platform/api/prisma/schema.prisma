@@ -1,0 +1,18 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+// TODO: DELETE this model entirely before running `prisma migrate dev` for the first time.
+// Do NOT keep it alongside real models — it will create a dead HealthCheck table in every
+// environment's migration history. It exists only because Prisma 5 requires at least one
+// model to run `prisma generate`.
+model HealthCheck {
+  id        Int      @id @default(autoincrement())
+  checkedAt DateTime @default(now())
+}
