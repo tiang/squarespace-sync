@@ -1,7 +1,7 @@
 const request = require('supertest');
 
 jest.mock('../db', () => ({
-  $connect: jest.fn().mockResolvedValue(undefined),
+  $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
 }));
 
 const app = require('../app');
@@ -17,7 +17,7 @@ describe('GET /api/health', () => {
 
   it('returns 503 when DB connection fails', async () => {
     const prisma = require('../db');
-    prisma.$connect.mockRejectedValueOnce(new Error('Connection refused'));
+    prisma.$queryRaw.mockRejectedValueOnce(new Error('Connection refused'));
 
     const res = await request(app).get('/api/health');
     expect(res.status).toBe(503);
