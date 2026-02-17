@@ -2,24 +2,24 @@
 
 ENV_FILE := .env
 
-# Start GCP emulators (firebase, postgres, gcs)
+# Start GCP emulators only (firebase, postgres, gcs)
 infra:
 	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) up -d
 
-# Alias for infra
+# Start full stack (infra + api + admin)
 up:
-	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) up -d
+	docker compose -f docker-compose.yml --env-file $(ENV_FILE) up -d
 
 # Stop all containers (keep volumes)
 down:
-	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) down
+	docker compose -f docker-compose.yml --env-file $(ENV_FILE) down
 
 # Tail logs for all services
 logs:
-	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) logs -f
+	docker compose -f docker-compose.yml --env-file $(ENV_FILE) logs -f
 
 # Drop postgres data volume and recreate (schema reset)
 db-reset:
-	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) stop postgres
+	docker compose -f docker-compose.yml --env-file $(ENV_FILE) stop postgres
 	docker volume rm platform_postgres_data || true
-	docker compose -f docker-compose.infra.yml --env-file $(ENV_FILE) up -d postgres
+	docker compose -f docker-compose.yml --env-file $(ENV_FILE) up -d postgres
