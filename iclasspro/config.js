@@ -14,6 +14,7 @@ const config = {
     studentsTable: process.env.ICLASSPRO_AIRTABLE_STUDENTS_TABLE || "ICP_Students",
     classesTable: process.env.ICLASSPRO_AIRTABLE_CLASSES_TABLE || "ICP_Classes",
     enrollmentsTable: process.env.ICLASSPRO_AIRTABLE_ENROLLMENTS_TABLE || "ICP_Enrollments",
+    rosterTable: process.env.ICLASSPRO_AIRTABLE_ROSTER_TABLE || "ICP_Roster",
   },
 };
 

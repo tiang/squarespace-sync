@@ -16,6 +16,7 @@ jest.mock("../../config", () => ({
     studentsTable: "ICP_Students",
     classesTable: "ICP_Classes",
     enrollmentsTable: "ICP_Enrollments",
+    rosterTable: "ICP_Roster",
   },
 }));
 
@@ -190,6 +191,7 @@ describe("IClassProAirtableService", () => {
       expect(summary.students).toEqual({ succeeded: 1, attempted: 1 });
       expect(summary.classes).toEqual({ succeeded: 1, attempted: 1 });
       expect(summary.enrollments).toEqual({ succeeded: 1, attempted: 1 });
+      expect(summary.roster).toEqual({ succeeded: 1, attempted: 1 });
     });
 
     it("counts failed upserts in attempted but not succeeded", async () => {
@@ -220,6 +222,7 @@ describe("IClassProAirtableService", () => {
       expect(summary.families).toEqual({ succeeded: 1, attempted: 1 });
       expect(summary.classes).toEqual({ succeeded: 2, attempted: 2 });
       expect(summary.enrollments).toEqual({ succeeded: 1, attempted: 1 });
+      expect(summary.roster).toEqual({ succeeded: 1, attempted: 1 });
     });
   });
 });
