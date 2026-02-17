@@ -1,21 +1,18 @@
 services:
   firebase:
-    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    image: andreysenov/firebase-tools:latest
     command: >
-      bash -c "
-        gcloud emulators firestore start --host-port=0.0.0.0:8080 &
-        firebase emulators:start --only auth,firestore,ui
-          --project rocket-academy-local
-      "
+      firebase emulators:start --only auth,firestore
+        --project rocket-academy-local
     ports:
       - "4000:4000"   # Emulator UI
       - "8080:8080"   # Firestore
       - "9099:9099"   # Auth
     volumes:
-      - ./firebase.json:/root/firebase.json:ro
-      - ./.firebaserc:/root/.firebaserc:ro
-      - firebase_data:/root/.config/firebase/emulators
-    working_dir: /root
+      - ./firebase.json:/home/node/firebase.json:ro
+      - ./.firebaserc:/home/node/.firebaserc:ro
+      - firebase_data:/home/node/.cache/firebase/emulators
+    working_dir: /home/node
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4000"]
       interval: 5s
