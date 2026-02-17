@@ -31,6 +31,43 @@ class FamilyDTO {
     this.address = address;
     this.emergencyContacts = emergencyContacts || [];
   }
+
+  /**
+   * Map a FamilyDTO to Airtable field names for ICP_Families table
+   * @param {FamilyDTO} family
+   * @returns {Object} Airtable fields object
+   */
+  static toAirtableFields(family) {
+    return {
+      "Family ID": String(family.familyId),
+      "Family Name": family.familyName || "",
+      "Primary Email": family.primaryEmail || "",
+      "Primary Phone": family.primaryPhone || "",
+      "Street": family.address?.street || "",
+      "City": family.address?.city || "",
+      "State": family.address?.state || "",
+      "Zip": family.address?.zip || "",
+    };
+  }
+
+  /**
+   * Map a guardian object to Airtable field names for ICP_Guardians table
+   * @param {Object} guardian - Guardian object from FamilyDTO.guardians[]
+   * @param {string|null} familyAirtableRecordId - Airtable record ID of the parent Family
+   * @returns {Object} Airtable fields object
+   */
+  static toGuardianAirtableFields(guardian, familyAirtableRecordId) {
+    return {
+      "Guardian ID": String(guardian.guardianId),
+      "First Name": guardian.firstName || "",
+      "Last Name": guardian.lastName || "",
+      "Email": guardian.email || "",
+      "Phone": guardian.phone || "",
+      "Relationship": guardian.relationship ? String(guardian.relationship) : "",
+      "Is Primary": guardian.isPrimary || false,
+      "Family": familyAirtableRecordId ? [familyAirtableRecordId] : [],
+    };
+  }
 }
 
 module.exports = FamilyDTO;
