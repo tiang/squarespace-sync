@@ -18,6 +18,7 @@ const TABLE_NAMES = {
   students: process.env.ICLASSPRO_AIRTABLE_STUDENTS_TABLE || "ICP_Students",
   classes: process.env.ICLASSPRO_AIRTABLE_CLASSES_TABLE || "ICP_Classes",
   enrollments: process.env.ICLASSPRO_AIRTABLE_ENROLLMENTS_TABLE || "ICP_Enrollments",
+  roster: process.env.ICLASSPRO_AIRTABLE_ROSTER_TABLE || "ICP_Roster",
 };
 
 const api = axios.create({
@@ -104,6 +105,49 @@ function enrollmentsFields(studentsTableId, classesTableId) {
   ];
 }
 
+function rosterFields() {
+  return [
+    { name: "Enrollment ID", type: "singleLineText" },
+    { name: "Enrollment Type", type: "singleLineText" },
+    { name: "Start Date", type: "date", options: { dateFormat: { name: "iso" } } },
+    { name: "Drop Date", type: "date", options: { dateFormat: { name: "iso" } } },
+    { name: "Trial", type: "checkbox", options: { icon: "check", color: "greenBright" } },
+    { name: "Waitlist", type: "checkbox", options: { icon: "check", color: "greenBright" } },
+    { name: "Makeup", type: "checkbox", options: { icon: "check", color: "greenBright" } },
+    { name: "Medical", type: "checkbox", options: { icon: "check", color: "greenBright" } },
+    { name: "Allow Image", type: "checkbox", options: { icon: "check", color: "greenBright" } },
+    { name: "Student ID", type: "singleLineText" },
+    { name: "Student First Name", type: "singleLineText" },
+    { name: "Student Last Name", type: "singleLineText" },
+    { name: "Student Age", type: "singleLineText" },
+    { name: "Student Gender", type: "singleLineText" },
+    { name: "Birth Date", type: "date", options: { dateFormat: { name: "iso" } } },
+    { name: "Health Concerns", type: "multilineText" },
+    { name: "Class ID", type: "singleLineText" },
+    { name: "Class Name", type: "singleLineText" },
+    { name: "Schedule", type: "singleLineText" },
+    { name: "Room", type: "singleLineText" },
+    { name: "Instructors", type: "singleLineText" },
+    { name: "Max Capacity", type: "number", options: { precision: 0 } },
+    { name: "Active Enrollments", type: "number", options: { precision: 0 } },
+    { name: "Openings", type: "number", options: { precision: 0 } },
+    { name: "Seats Filled", type: "number", options: { precision: 0 } },
+    { name: "Waitlist Count", type: "number", options: { precision: 0 } },
+    { name: "Family ID", type: "singleLineText" },
+    { name: "Family Name", type: "singleLineText" },
+    { name: "Primary Email", type: "email" },
+    { name: "Primary Phone", type: "phoneNumber" },
+    { name: "Street", type: "singleLineText" },
+    { name: "City", type: "singleLineText" },
+    { name: "State", type: "singleLineText" },
+    { name: "Zip", type: "singleLineText" },
+    { name: "Guardian Name", type: "singleLineText" },
+    { name: "Guardian Email", type: "email" },
+    { name: "Guardian Phone", type: "phoneNumber" },
+    { name: "Guardian Relationship", type: "singleLineText" },
+  ];
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 async function ensureTable(existingByName, name, fieldsBuilder) {
@@ -126,20 +170,24 @@ async function main() {
   logger.info(`Found ${existing.length} existing table(s) in base`);
 
   // Step 1: Tables with no linked-record fields
-  logger.info("Step 1/3: Base tables (no links)");
+  logger.info("Step 1/4: Base tables (no links)");
   const familiesId = await ensureTable(existingByName, TABLE_NAMES.families, familiesFields);
   const classesId = await ensureTable(existingByName, TABLE_NAMES.classes, classesFields);
 
   // Step 2: Tables that link to ICP_Families
-  logger.info("Step 2/3: Tables linked to Families");
+  logger.info("Step 2/4: Tables linked to Families");
   await ensureTable(existingByName, TABLE_NAMES.guardians, () => guardiansFields(familiesId));
   const studentsId = await ensureTable(existingByName, TABLE_NAMES.students, () => studentsFields(familiesId));
 
   // Step 3: Enrollments links to both ICP_Students and ICP_Classes
-  logger.info("Step 3/3: Enrollments (links to Students + Classes)");
+  logger.info("Step 3/4: Enrollments (links to Students + Classes)");
   await ensureTable(existingByName, TABLE_NAMES.enrollments, () => enrollmentsFields(studentsId, classesId));
 
-  logger.info("Done. All 5 tables are ready.");
+  // Step 4/4: Denormalized roster table (no links)
+  logger.info("Step 4/4: Roster (denormalized, no links)");
+  await ensureTable(existingByName, TABLE_NAMES.roster, rosterFields);
+
+  logger.info("Done. All 6 tables are ready.");
 }
 
 main().catch((err) => {
