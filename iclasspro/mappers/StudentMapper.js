@@ -60,11 +60,11 @@ class StudentMapper {
 
     // Extract flags with defaults
     const flags = {
-      medical: rawStudent.flags?.medical || false,
-      allowImage: rawStudent.flags?.allowImage || false,
-      trial: rawStudent.flags?.trial || false,
-      waitlist: rawStudent.flags?.waitlist || false,
-      makeup: rawStudent.flags?.makeup || false,
+      medical: rawStudent.flags?.medical ?? false,
+      allowImage: rawStudent.flags?.allowImage ?? false,
+      trial: rawStudent.flags?.trial ?? false,
+      waitlist: rawStudent.flags?.waitlist ?? false,
+      makeup: rawStudent.flags?.makeup ?? false,
     };
 
     return new StudentDTO(
