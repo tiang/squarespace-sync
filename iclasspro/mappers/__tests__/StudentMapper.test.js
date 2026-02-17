@@ -1,3 +1,14 @@
+/**
+ * StudentMapper Tests
+ *
+ * Tests for the StudentMapper transformation logic.
+ * Tests organized by concern:
+ * - required field validation: Field checks (id, enrollmentId, firstName, lastName) and error messages
+ * - date validation: ISO date format validation for startDate and birthDate
+ * - field transformation: Field mappings (id→studentId, type→enrollmentType) and null defaults
+ * - flags handling: Boolean flag defaults and explicit false preservation
+ * - integration: End-to-end transformation scenarios (complete, minimal, all-optional)
+ */
 const StudentMapper = require("../StudentMapper");
 
 // Helper to build a complete student object for testing

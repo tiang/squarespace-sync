@@ -1,3 +1,13 @@
+/**
+ * ClassMapper Tests
+ *
+ * Tests for the ClassMapper transformation logic.
+ * Tests organized by concern:
+ * - validation: Required field checks (id, name) and error handling
+ * - field mapping: Value transformations (value→id, instructor→instructors) and defaults
+ * - occupancy: Nested object handling and numeric defaults
+ * - integration: End-to-end transformation scenarios (complete + minimal objects)
+ */
 const ClassMapper = require("../ClassMapper");
 
 // Helper to build a complete class object for testing

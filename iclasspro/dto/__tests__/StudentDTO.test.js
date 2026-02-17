@@ -1,3 +1,12 @@
+/**
+ * StudentDTO Tests
+ *
+ * Tests for the StudentDTO data transfer object.
+ * Tests organized by concern:
+ * - Constructor field assignment (all 14 fields)
+ * - Null value handling for optional fields
+ * - Flags object reference preservation (no deep copying)
+ */
 const StudentDTO = require("../StudentDTO");
 
 describe("StudentDTO", () => {

@@ -1,3 +1,12 @@
+/**
+ * ClassDTO Tests
+ *
+ * Tests for the ClassDTO data transfer object.
+ * Tests organized by concern:
+ * - Constructor field assignment (all 7 fields)
+ * - Empty/null value handling
+ * - Object reference preservation (no deep copying)
+ */
 const ClassDTO = require("../ClassDTO");
 
 describe("ClassDTO", () => {
