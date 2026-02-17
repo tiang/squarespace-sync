@@ -8,8 +8,10 @@ generator client {
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
-// Placeholder model required for prisma generate to succeed.
-// Replace with real models as the schema evolves.
+// TODO: DELETE this model entirely before running `prisma migrate dev` for the first time.
+// Do NOT keep it alongside real models — it will create a dead HealthCheck table in every
+// environment's migration history. It exists only because Prisma 5 requires at least one
+// model to run `prisma generate`.
 model HealthCheck {
   id        Int      @id @default(autoincrement())
   checkedAt DateTime @default(now())
