@@ -53,7 +53,6 @@
       "Bash(git checkout main)",
       "Bash(git restore:*)",
       "Bash(cd /Users/tiang/Documents/Dev/Rocket\\\\ Academy/squarespace-sync && grep:*)",
-      "Bash(*)",
       "WebFetch(domain:www.shadcn.io)",
       "mcp__shadcn__get_project_registries",
       "mcp__shadcn__list_items_in_registries",
