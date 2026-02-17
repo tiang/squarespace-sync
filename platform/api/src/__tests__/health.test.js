@@ -23,5 +23,6 @@ describe('GET /api/health', () => {
     expect(res.status).toBe(503);
     expect(res.body.status).toBe('error');
     expect(res.body.db).toBe('disconnected');
+    expect(res.body.error).toBe('Connection refused');
   });
 });
