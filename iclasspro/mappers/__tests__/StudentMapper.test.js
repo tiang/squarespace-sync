@@ -279,4 +279,92 @@ describe("StudentMapper.transform", () => {
       expect(result.flags.makeup).toBe(false);
     });
   });
+
+  describe("integration", () => {
+    test("transforms complete real-world student object", () => {
+      const rawStudent = makeStudent();
+      const result = StudentMapper.transform(rawStudent);
+
+      expect(result.studentId).toBe(338);
+      expect(result.enrollmentId).toBe(327);
+      expect(result.firstName).toBe("Alice");
+      expect(result.lastName).toBe("Smith");
+      expect(result.age).toBe("7y");
+      expect(result.gender).toBe("F");
+      expect(result.enrollmentType).toBe("ACTIVE");
+      expect(result.startDate).toBe("2026-02-08");
+      expect(result.dropDate).toBeNull();
+      expect(result.familyName).toBe("Smith Family");
+      expect(result.familyId).toBe(254);
+      expect(result.birthDate).toBe("2019-05-15");
+      expect(result.healthConcerns).toBeNull();
+      expect(result.flags).toEqual({
+        medical: false,
+        allowImage: true,
+        trial: false,
+        waitlist: false,
+        makeup: false,
+      });
+    });
+
+    test("handles minimal student (only required fields)", () => {
+      const rawStudent = {
+        id: 1,
+        enrollmentId: 2,
+        firstName: "Bob",
+        lastName: "Jones",
+      };
+      const result = StudentMapper.transform(rawStudent);
+
+      expect(result.studentId).toBe(1);
+      expect(result.enrollmentId).toBe(2);
+      expect(result.firstName).toBe("Bob");
+      expect(result.lastName).toBe("Jones");
+      expect(result.age).toBeNull();
+      expect(result.gender).toBeNull();
+      expect(result.enrollmentType).toBeNull();
+      expect(result.startDate).toBeNull();
+      expect(result.dropDate).toBeNull();
+      expect(result.familyName).toBeNull();
+      expect(result.familyId).toBeNull();
+      expect(result.birthDate).toBeNull();
+      expect(result.healthConcerns).toBeNull();
+      expect(result.flags).toEqual({
+        medical: false,
+        allowImage: false,
+        trial: false,
+        waitlist: false,
+        makeup: false,
+      });
+    });
+
+    test("handles student with all optional fields populated", () => {
+      const rawStudent = makeStudent({
+        age: "10y",
+        gender: "M",
+        type: "WAITLIST",
+        startDate: "2026-01-01",
+        dropDate: "2026-06-01",
+        familyName: "Johnson Family",
+        familyId: 999,
+        birthDate: "2016-03-15",
+        healthConcerns: "Peanut allergy",
+        flags: {
+          medical: true,
+          allowImage: true,
+          trial: true,
+          waitlist: true,
+          makeup: true,
+        },
+      });
+      const result = StudentMapper.transform(rawStudent);
+
+      expect(result.age).toBe("10y");
+      expect(result.gender).toBe("M");
+      expect(result.enrollmentType).toBe("WAITLIST");
+      expect(result.dropDate).toBe("2026-06-01");
+      expect(result.healthConcerns).toBe("Peanut allergy");
+      expect(result.flags.medical).toBe(true);
+    });
+  });
 });
