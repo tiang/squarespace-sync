@@ -4,6 +4,7 @@ const config = require("../config");
 const FamilyDTO = require("../dto/FamilyDTO");
 const ClassDTO = require("../dto/ClassDTO");
 const StudentDTO = require("../dto/StudentDTO");
+const RosterDTO = require("../dto/RosterDTO");
 
 const CHUNK_SIZE = 10;
 
@@ -229,6 +230,31 @@ class IClassProAirtableService {
   }
 
   /**
+   * Upsert denormalized roster rows (one per enrollment). Returns { idMap, failed }.
+   */
+  async upsertRoster(classes) {
+    const uniqueEnrollments = new Map();
+    for (const cls of classes) {
+      for (const student of cls.roster) {
+        if (!uniqueEnrollments.has(student.enrollmentId)) {
+          uniqueEnrollments.set(student.enrollmentId, { student, cls });
+        }
+      }
+    }
+
+    return this.bulkUpsert(
+      config.airtable.rosterTable,
+      [...uniqueEnrollments.values()],
+      ({ student, cls }) => ({
+        keyField: "Enrollment ID",
+        keyValue: String(student.enrollmentId),
+        fields: RosterDTO.toAirtableFields(student, cls),
+      }),
+      ({ student }) => student.enrollmentId
+    );
+  }
+
+  /**
    * Main entry point: sync all tables from a JSON file.
    * @param {string} jsonPath - Path to iclasspro-*.json file
    * @returns {Object} Summary counts per table: { succeeded, attempted }
@@ -250,6 +276,7 @@ class IClassProAirtableService {
       studentResult.idMap,
       classResult.idMap
     );
+    const rosterResult = await this.upsertRoster(classes);
 
     const tally = (result) => ({
       succeeded: result.idMap.size,
@@ -262,6 +289,7 @@ class IClassProAirtableService {
       students: tally(studentResult),
       classes: tally(classResult),
       enrollments: tally(enrollmentResult),
+      roster: tally(rosterResult),
     };
   }
 }
