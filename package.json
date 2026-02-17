@@ -14,7 +14,9 @@
     "dashboard:build": "cd dashboard && npm run build",
     "dashboard:start": "node dashboard/server/index.js",
     "install:all": "npm run sync:install && npm run dashboard:install",
+    "iclasspro:test": "cd iclasspro && npx jest",
     "iclasspro": "node iclasspro/index.js",
+    "iclasspro:setup": "node iclasspro/commands/create-airtable-tables.js",
     "iclasspro:airtable": "node iclasspro/commands/sync-airtable.js",
     "iclasspro:full": "node iclasspro/commands/sync-full.js"
   },
