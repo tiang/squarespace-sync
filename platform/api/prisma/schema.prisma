@@ -80,7 +80,6 @@ model Campus {
 
   campusStaff CampusStaff[]
   cohorts     Cohort[]
-  families    Family[]
 
   @@map("campuses")
 }
@@ -164,8 +163,6 @@ model Session {
 
 model Family {
   id              String   @id @default(uuid())
-  campusId        String
-  campus          Campus   @relation(fields: [campusId], references: [id])
   name            String
   primaryEmail    String   @unique
   primaryPhone    String?

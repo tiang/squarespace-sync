@@ -4,8 +4,10 @@ const prisma = new PrismaClient();
 
 // ── Seed data ─────────────────────────────────────────────────────────────────
 // Gender values use the Gender enum: 'MALE' or 'FEMALE' (not 'M'/'F')
-// birthDate is stored as TIMESTAMP(3) in UTC. Pass midnight UTC (e.g. new Date('2017-03-15'))
-// so the date is preserved correctly regardless of server timezone.
+// birthDate is stored as TIMESTAMP(3) in UTC. Use date-only ISO strings (e.g. new Date('2017-03-15'))
+// which ECMAScript parses as UTC midnight — safe regardless of server timezone.
+// Do NOT use new Date('2017-03-15T00:00:00') — without a trailing 'Z' it parses as local time
+// and will silently shift the stored date by up to ±14 hours.
 
 const cohort1Data = [
   {
@@ -65,14 +67,16 @@ async function main() {
   await prisma.$transaction(async (tx) => {
     // ── Cleanup (reverse FK order) ─────────────────────────────────────────
     // Delete leaf → parent to satisfy FK constraints:
-    //   attendance → session, student
-    //   enrolment  → student, cohort
-    //   session    → cohort
-    //   cohort     → program, campus
+    //   attendance  → session, student
+    //   enrolment   → student, cohort
+    //   session     → cohort, staff
+    //   cohort      → program, campus
+    //   program     → organisation
     //   campusStaff → campus, staff
-    //   student    → family
-    //   family, staff, program → campus / organisation
-    //   campus     → organisation
+    //   student     → family
+    //   family      → (no campus FK — campus is derived via enrolments)
+    //   staff       → organisation
+    //   campus      → organisation
     await tx.attendance.deleteMany();
     await tx.enrolment.deleteMany();
     await tx.session.deleteMany();
@@ -229,14 +233,14 @@ async function main() {
     // ── Families & Students ──────────────────────────────────────────────────
     const cohort1Students = [];
     for (const { family: familyData, student: studentData } of cohort1Data) {
-      const family = await tx.family.create({ data: { campusId: campus.id, ...familyData } });
+      const family = await tx.family.create({ data: { ...familyData } });
       const student = await tx.student.create({ data: { familyId: family.id, ...studentData } });
       cohort1Students.push(student);
     }
 
     const cohort2Students = [];
     for (const { family: familyData, student: studentData } of cohort2Data) {
-      const family = await tx.family.create({ data: { campusId: campus.id, ...familyData } });
+      const family = await tx.family.create({ data: { ...familyData } });
       const student = await tx.student.create({ data: { familyId: family.id, ...studentData } });
       cohort2Students.push(student);
     }
