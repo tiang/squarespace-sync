@@ -5,7 +5,7 @@ import { QUERY_KEYS } from '../lib/queryKeys.js';
 import { Badge } from '@ra/ui';
 
 export default function BillingPage() {
-  const { data: invoices = [], isLoading } = useQuery({
+  const { data: invoices = [], isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.invoices(),
     queryFn: () => get('/api/v1/parent/stub/invoices'),
   });
@@ -19,7 +19,11 @@ export default function BillingPage() {
 
       {isLoading && <div className="animate-pulse h-32 bg-slate-50 rounded-2xl" />}
 
-      {!isLoading && invoices.length === 0 && (
+      {isError && (
+        <p className="text-rose-500 text-sm">Failed to load invoices. Is the API running?</p>
+      )}
+
+      {!isLoading && !isError && invoices.length === 0 && (
         <div className="text-center py-24 text-slate-400">
           <Icon icon="lucide:receipt" className="w-12 h-12 mx-auto mb-4 opacity-40" />
           <p className="font-medium mb-1">No invoices yet</p>

@@ -4,7 +4,7 @@ import { Icon } from '@iconify/react';
 import { get, patch } from '../lib/api.js';
 import { QUERY_KEYS } from '../lib/queryKeys.js';
 
-function Field({ label, name, value, onChange, type = 'text' }) {
+function Field({ label, name, value, onChange, type = 'text', readOnly = false }) {
   return (
     <div>
       <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
@@ -14,8 +14,13 @@ function Field({ label, name, value, onChange, type = 'text' }) {
         type={type}
         name={name}
         value={value}
-        onChange={onChange}
-        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-colors"
+        onChange={readOnly ? undefined : onChange}
+        readOnly={readOnly}
+        className={`w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm transition-colors ${
+          readOnly
+            ? 'text-slate-400 cursor-not-allowed'
+            : 'focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent'
+        }`}
       />
     </div>
   );
@@ -24,7 +29,7 @@ function Field({ label, name, value, onChange, type = 'text' }) {
 export default function ProfilePage() {
   const queryClient = useQueryClient();
 
-  const { data: family, isLoading } = useQuery({
+  const { data: family, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.family(),
     queryFn: () => get('/api/v1/parent/stub'),
   });
@@ -68,6 +73,7 @@ export default function ProfilePage() {
   }
 
   if (isLoading) return <div className="animate-pulse h-64 bg-slate-50 rounded-2xl" />;
+  if (isError) return <p className="text-rose-500 text-sm">Failed to load profile. Is the API running?</p>;
 
   return (
     <div>
@@ -83,7 +89,7 @@ export default function ProfilePage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <Field label="Family name"   name="name"           value={form.name}           onChange={handleChange} />
             <Field label="Phone"         name="primaryPhone"   value={form.primaryPhone}   onChange={handleChange} type="tel" />
-            <Field label="Email"         name="primaryEmail"   value={family?.primaryEmail ?? ''} onChange={() => {}} />
+            <Field label="Email"         name="primaryEmail"   value={family?.primaryEmail ?? ''} onChange={() => {}} readOnly />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="Street"     name="addressStreet"   value={form.addressStreet}   onChange={handleChange} />
@@ -120,7 +126,7 @@ export default function ProfilePage() {
             {family?.students.map(s => (
               <div key={s.id} className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-sm shrink-0">
-                  {s.firstName[0]}{s.lastName[0]}
+                  {s.firstName?.[0] ?? ''}{s.lastName?.[0] ?? ''}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm">{s.firstName} {s.lastName}</p>

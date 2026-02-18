@@ -70,7 +70,7 @@ export default function ChildDetail() {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState('Attendance');
 
-  const { data: family, isLoading } = useQuery({
+  const { data: family, isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.family(),
     queryFn: () => get('/api/v1/parent/stub'),
   });
@@ -88,12 +88,16 @@ export default function ChildDetail() {
 
       {isLoading && <div className="animate-pulse h-20 bg-slate-50 rounded-2xl mb-8" />}
 
+      {isError && (
+        <p className="text-rose-500 text-sm mb-8">Failed to load student data. Is the API running?</p>
+      )}
+
       {student && (
         <>
           {/* Student header */}
           <div className="flex items-start gap-6 mb-10">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-2xl shrink-0">
-              {student.firstName[0]}{student.lastName[0]}
+              {student.firstName?.[0] ?? ''}{student.lastName?.[0] ?? ''}
             </div>
             <div>
               <h1 className="text-4xl font-semibold tracking-tight">

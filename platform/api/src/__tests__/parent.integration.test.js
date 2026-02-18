@@ -5,8 +5,9 @@
  * 1. GET /parent/stub returns family with students and enrolments.
  * 2. GET /parent/stub/students/:id/attendance returns records (empty if no seed data).
  * 3. GET /parent/stub/invoices returns empty array (billing not yet modelled).
- * 4. PATCH /parent/stub updates contact fields without touching email.
- * 5. PATCH /parent/stub ignores unknown fields (does not throw).
+ * 4. GET /parent/stub/messages returns empty array (messaging not yet built).
+ * 5. PATCH /parent/stub updates contact fields without touching email.
+ * 6. PATCH /parent/stub ignores unknown fields (does not throw).
  *
  * Requires DATABASE_URL to be set and seed data to be present.
  */
@@ -59,6 +60,14 @@ describe('Parent portal stub routes', () => {
   describe('GET /api/v1/parent/stub/invoices', () => {
     it('returns 200 with an empty array (billing not yet modelled)', async () => {
       const res = await request(app).get('/api/v1/parent/stub/invoices');
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual([]);
+    });
+  });
+
+  describe('GET /api/v1/parent/stub/messages', () => {
+    it('returns 200 with an empty array (messaging not yet built)', async () => {
+      const res = await request(app).get('/api/v1/parent/stub/messages');
       expect(res.status).toBe(200);
       expect(res.body).toEqual([]);
     });
