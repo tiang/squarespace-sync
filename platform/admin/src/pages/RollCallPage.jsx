@@ -74,18 +74,18 @@ export default function RollCallPage() {
     return acc;
   }, {});
 
-  if (isLoading || !session) {
-    return (
-      <main className="max-w-[1440px] mx-auto px-10 pt-24">
-        <p className="text-slate-400">Loading session...</p>
-      </main>
-    );
-  }
-
   if (isError) {
     return (
       <main className="max-w-[1440px] mx-auto px-10 pt-24">
         <p className="text-rose-500 text-sm">Failed to load session. Please try again.</p>
+      </main>
+    );
+  }
+
+  if (isLoading || !session) {
+    return (
+      <main className="max-w-[1440px] mx-auto px-10 pt-24">
+        <p className="text-slate-400">Loading session...</p>
       </main>
     );
   }

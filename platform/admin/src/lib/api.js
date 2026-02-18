@@ -14,7 +14,7 @@ export async function put(path, body) {
   });
   if (!res.ok) {
     let message = `API error ${res.status}: ${path}`;
-    try { const body = await res.json(); if (body.error) message = body.error; } catch {}
+    try { const errorBody = await res.json(); if (errorBody.error) message = errorBody.error; } catch {}
     throw new Error(message);
   }
 }
