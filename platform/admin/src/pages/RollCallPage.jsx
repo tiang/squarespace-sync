@@ -2,16 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, put } from '../lib/api';
+import { formatDateTime } from '../lib/format';
 import StudentRow from '../components/StudentRow';
-
-function formatDateTime(isoString) {
-  const d = new Date(isoString);
-  return (
-    d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' }) +
-    ' • ' +
-    d.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
-  );
-}
 
 export default function RollCallPage() {
   const { id } = useParams();
@@ -82,7 +74,7 @@ export default function RollCallPage() {
     return acc;
   }, {});
 
-  if (isLoading) {
+  if (isLoading || !session) {
     return (
       <main className="max-w-[1440px] mx-auto px-10 pt-24">
         <p className="text-slate-400">Loading session...</p>

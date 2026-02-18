@@ -1,11 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-
-function formatTime(isoString) {
-  return new Date(isoString).toLocaleTimeString('en-AU', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+import { Link } from 'react-router-dom';
+import { formatTime } from '../lib/format';
 
 const STATUS_STYLES = {
   SCHEDULED: 'bg-sky-50 text-sky-700 border-sky-200',
@@ -14,11 +8,13 @@ const STATUS_STYLES = {
 };
 
 export default function SessionCard({ session }) {
-  const navigate = useNavigate();
   const { id, scheduledAt, durationMinutes, status, cohort, enrolledCount } = session;
 
   return (
-    <div onClick={() => navigate(`/instructor/session/${id}/attend`)} className="border border-slate-100 p-8 rounded-2xl bg-white shadow-sm flex flex-col transition-all duration-200 hover:border-black hover:-translate-y-0.5 cursor-pointer">
+    <Link
+      to={`/instructor/session/${id}/attend`}
+      className="border border-slate-100 p-8 rounded-2xl bg-white shadow-sm flex flex-col transition-all duration-200 hover:border-black hover:-translate-y-0.5"
+    >
       <div className="flex items-start justify-between mb-6">
         <div>
           <span className="px-3 py-1 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 inline-block">
@@ -36,16 +32,13 @@ export default function SessionCard({ session }) {
       </div>
 
       <div className="flex items-center gap-3 mt-auto pt-6 border-t border-slate-100">
-        <button
-          onClick={(e) => { e.stopPropagation(); navigate(`/instructor/session/${id}/attend`); }}
-          className="flex-1 py-3 bg-black text-white text-center rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors"
-        >
+        <span className="flex-1 py-3 bg-black text-white text-center rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors">
           Take Attendance
-        </button>
+        </span>
         <span className={`px-3 py-1.5 border rounded-full text-xs font-bold ${STATUS_STYLES[status] ?? 'bg-slate-50 text-slate-500 border-slate-200'}`}>
           {status}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

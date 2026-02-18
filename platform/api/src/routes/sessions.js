@@ -62,8 +62,28 @@ router.put('/sessions/:id/attendance', async (req, res, next) => {
       }
     }
 
-    const session = await prisma.session.findUnique({ where: { id: req.params.id }, select: { id: true } });
+    const session = await prisma.session.findUnique({
+      where: { id: req.params.id },
+      select: {
+        id: true,
+        cohort: {
+          select: {
+            enrolments: {
+              where: { status: 'ACTIVE' },
+              select: { studentId: true },
+            },
+          },
+        },
+      },
+    });
     if (!session) return res.status(404).json({ error: 'Session not found' });
+
+    const enrolledIds = new Set(session.cohort.enrolments.map(e => e.studentId));
+    for (const r of records) {
+      if (!enrolledIds.has(r.studentId)) {
+        return res.status(400).json({ error: `Student ${r.studentId} is not enrolled in this session` });
+      }
+    }
 
     await prisma.$transaction(
       records.map(r =>

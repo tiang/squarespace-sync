@@ -12,5 +12,9 @@ export async function put(path, body) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`API error ${res.status}: ${path}`);
+  if (!res.ok) {
+    let message = `API error ${res.status}: ${path}`;
+    try { const body = await res.json(); if (body.error) message = body.error; } catch {}
+    throw new Error(message);
+  }
 }

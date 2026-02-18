@@ -80,9 +80,19 @@ describe('PUT /api/v1/sessions/:id/attendance', () => {
     { studentId: 'student-uuid-2', status: 'ABSENT', notes: 'Called in sick' },
   ];
 
+  const FAKE_SESSION_WITH_ENROLMENTS = {
+    id: 'session-uuid-456',
+    cohort: {
+      enrolments: [
+        { studentId: 'student-uuid-1' },
+        { studentId: 'student-uuid-2' },
+      ],
+    },
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    prisma.session.findUnique.mockResolvedValue({ id: 'session-uuid-456' });
+    prisma.session.findUnique.mockResolvedValue(FAKE_SESSION_WITH_ENROLMENTS);
     prisma.$transaction.mockImplementation(ops => Promise.all(ops));
     prisma.attendance.upsert.mockResolvedValue({});
   });
@@ -112,6 +122,21 @@ describe('PUT /api/v1/sessions/:id/attendance', () => {
     const res = await request(app)
       .put('/api/v1/sessions/session-uuid-456/attendance')
       .send({ records: [{ studentId: 'student-uuid-1', status: 'MAYBE' }] });
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 404 when session not found', async () => {
+    prisma.session.findUnique.mockResolvedValue(null);
+    const res = await request(app)
+      .put('/api/v1/sessions/nonexistent/attendance')
+      .send({ records: VALID_RECORDS });
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 400 when student is not enrolled in the session', async () => {
+    const res = await request(app)
+      .put('/api/v1/sessions/session-uuid-456/attendance')
+      .send({ records: [{ studentId: 'unknown-student-uuid', status: 'PRESENT' }] });
     expect(res.status).toBe(400);
   });
 });

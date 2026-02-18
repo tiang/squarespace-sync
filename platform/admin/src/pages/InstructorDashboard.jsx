@@ -1,15 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { get } from '../lib/api';
+import { formatDate } from '../lib/format';
 import SessionCard from '../components/SessionCard';
-
-function formatDate(date) {
-  return date.toLocaleDateString('en-AU', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 export default function InstructorDashboard() {
   const { data: sessions = [], isLoading, isError } = useQuery({
@@ -44,7 +36,7 @@ export default function InstructorDashboard() {
         </div>
       )}
 
-      {!isLoading && sessions.length > 0 && (
+      {!isLoading && !isError && sessions.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {sessions.map(session => (
             <SessionCard key={session.id} session={session} />
