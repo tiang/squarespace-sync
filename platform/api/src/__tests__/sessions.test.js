@@ -93,6 +93,8 @@ describe('PUT /api/v1/sessions/:id/attendance', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     prisma.session.findUnique.mockResolvedValue(FAKE_SESSION_WITH_ENROLMENTS);
+    // Approximation: real Prisma $transaction takes query builder objects, not Promises.
+    // Promise.all works here because upsert is mocked to return a resolved Promise.
     prisma.$transaction.mockImplementation(ops => Promise.all(ops));
     prisma.attendance.upsert.mockResolvedValue({});
   });

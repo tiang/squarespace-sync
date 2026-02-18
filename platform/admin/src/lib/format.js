@@ -14,8 +14,9 @@ export function formatDateTime(isoString) {
   );
 }
 
-export function formatDate(date) {
-  return date.toLocaleDateString('en-AU', {
+// Accepts an ISO string or a Date object (unlike formatTime/formatDateTime which require ISO strings)
+export function formatDate(isoStringOrDate) {
+  return new Date(isoStringOrDate).toLocaleDateString('en-AU', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

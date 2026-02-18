@@ -13,6 +13,7 @@ export default function SessionCard({ session }) {
   return (
     <Link
       to={`/instructor/session/${id}/attend`}
+      aria-label={`Take attendance for ${cohort.name}`}
       className="border border-slate-100 p-8 rounded-2xl bg-white shadow-sm flex flex-col transition-all duration-200 hover:border-black hover:-translate-y-0.5"
     >
       <div className="flex items-start justify-between mb-6">
