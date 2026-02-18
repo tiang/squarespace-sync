@@ -5,6 +5,7 @@
  * 1. A family can be created without a campusId (no direct campus FK).
  * 2. A family's campus affiliations are queryable through the enrolment
  *    relationship: family → students → enrolments → cohort → campus.
+ * 3. A family with no enrolments returns an empty campus list.
  *
  * These tests run against the real database. Requires DATABASE_URL to be set.
  */
@@ -13,8 +14,9 @@ const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
 
-// Unique prefix so parallel test runs don't collide
-const RUN_ID = Date.now().toString();
+// Combine timestamp + PID so parallel CI workers spawned in the same millisecond
+// don't collide on the unique email constraint.
+const RUN_ID = `${Date.now()}-${process.pid}`;
 
 async function createTestFixtures() {
   return prisma.$transaction(async (tx) => {
@@ -48,6 +50,14 @@ async function createTestFixtures() {
       },
     });
 
+    // Separate family with no enrolments — for the zero-enrolment boundary test
+    const familyNoEnrolments = await tx.family.create({
+      data: {
+        name: `Test Family No Enrolments ${RUN_ID}`,
+        primaryEmail: `no-enrolments.${RUN_ID}@example.com`,
+      },
+    });
+
     const student = await tx.student.create({
       data: {
         familyId: family.id,
@@ -66,19 +76,20 @@ async function createTestFixtures() {
       },
     });
 
-    return { org, campus, family, student, cohort };
+    return { org, campus, program, cohort, family, familyNoEnrolments, student };
   });
 }
 
 async function deleteTestFixtures(ids) {
   await prisma.$transaction(async (tx) => {
     await tx.enrolment.deleteMany({ where: { studentId: ids.studentId } });
-    await tx.student.deleteMany({ where: { id: ids.studentId } });
-    await tx.family.deleteMany({ where: { id: ids.familyId } });
-    await tx.cohort.deleteMany({ where: { id: ids.cohortId } });
-    await tx.program.deleteMany({ where: { organisationId: ids.orgId } });
-    await tx.campus.deleteMany({ where: { id: ids.campusId } });
-    await tx.organisation.deleteMany({ where: { id: ids.orgId } });
+    await tx.student.delete({ where: { id: ids.studentId } });
+    await tx.family.delete({ where: { id: ids.familyId } });
+    await tx.family.delete({ where: { id: ids.familyNoEnrolmentsId } });
+    await tx.cohort.delete({ where: { id: ids.cohortId } });
+    await tx.program.delete({ where: { id: ids.programId } });
+    await tx.campus.delete({ where: { id: ids.campusId } });
+    await tx.organisation.delete({ where: { id: ids.orgId } });
   });
 }
 
@@ -90,14 +101,19 @@ describe('Family — no direct campus FK', () => {
   });
 
   afterAll(async () => {
-    await deleteTestFixtures({
-      studentId: fixtures.student.id,
-      familyId: fixtures.family.id,
-      cohortId: fixtures.cohort.id,
-      campusId: fixtures.campus.id,
-      orgId: fixtures.org.id,
-    });
-    await prisma.$disconnect();
+    try {
+      await deleteTestFixtures({
+        studentId: fixtures.student.id,
+        familyId: fixtures.family.id,
+        familyNoEnrolmentsId: fixtures.familyNoEnrolments.id,
+        cohortId: fixtures.cohort.id,
+        programId: fixtures.program.id,
+        campusId: fixtures.campus.id,
+        orgId: fixtures.org.id,
+      });
+    } finally {
+      await prisma.$disconnect();
+    }
   });
 
   it('creates a family without campusId', () => {
@@ -134,6 +150,27 @@ describe('Family — no direct campus FK', () => {
     expect(campuses[0].name).toBe(`Test Campus ${RUN_ID}`);
   });
 
+  it('returns empty campus list for a family with no enrolments', async () => {
+    const result = await prisma.family.findUnique({
+      where: { id: fixtures.familyNoEnrolments.id },
+      include: {
+        students: {
+          include: {
+            enrolments: {
+              include: { cohort: { include: { campus: true } } },
+            },
+          },
+        },
+      },
+    });
+
+    const campuses = result.students
+      .flatMap((s) => s.enrolments)
+      .map((e) => e.cohort.campus);
+
+    expect(campuses).toHaveLength(0);
+  });
+
   it('enforces global uniqueness on primaryEmail', async () => {
     await expect(
       prisma.family.create({
@@ -142,6 +179,6 @@ describe('Family — no direct campus FK', () => {
           primaryEmail: `test.${RUN_ID}@example.com`,
         },
       })
-    ).rejects.toThrow();
+    ).rejects.toMatchObject({ code: 'P2002' });
   });
 });
