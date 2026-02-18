@@ -17,7 +17,7 @@ export default function RollCallPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { data: session, isLoading } = useQuery({
+  const { data: session, isLoading, isError } = useQuery({
     queryKey: ['session', id],
     queryFn: () => get(`/api/v1/sessions/${id}`),
     staleTime: Infinity,
@@ -82,6 +82,14 @@ export default function RollCallPage() {
     return (
       <main className="max-w-[1440px] mx-auto px-10 pt-24">
         <p className="text-slate-400">Loading session...</p>
+      </main>
+    );
+  }
+
+  if (isError) {
+    return (
+      <main className="max-w-[1440px] mx-auto px-10 pt-24">
+        <p className="text-rose-500 text-sm">Failed to load session. Please try again.</p>
       </main>
     );
   }

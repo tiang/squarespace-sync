@@ -37,7 +37,7 @@ export default function SessionCard({ session }) {
 
       <div className="flex items-center gap-3 mt-auto pt-6 border-t border-slate-100">
         <button
-          onClick={() => navigate(`/instructor/session/${id}/attend`)}
+          onClick={(e) => { e.stopPropagation(); navigate(`/instructor/session/${id}/attend`); }}
           className="flex-1 py-3 bg-black text-white text-center rounded-xl text-sm font-bold hover:bg-slate-800 transition-colors"
         >
           Take Attendance

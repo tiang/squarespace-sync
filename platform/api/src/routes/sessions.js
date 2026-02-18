@@ -62,6 +62,9 @@ router.put('/sessions/:id/attendance', async (req, res, next) => {
       }
     }
 
+    const session = await prisma.session.findUnique({ where: { id: req.params.id }, select: { id: true } });
+    if (!session) return res.status(404).json({ error: 'Session not found' });
+
     await prisma.$transaction(
       records.map(r =>
         prisma.attendance.upsert({

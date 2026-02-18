@@ -82,6 +82,7 @@ describe('PUT /api/v1/sessions/:id/attendance', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    prisma.session.findUnique.mockResolvedValue({ id: 'session-uuid-456' });
     prisma.$transaction.mockImplementation(ops => Promise.all(ops));
     prisma.attendance.upsert.mockResolvedValue({});
   });
