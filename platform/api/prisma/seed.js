@@ -4,6 +4,8 @@ const prisma = new PrismaClient();
 
 // ── Seed data ─────────────────────────────────────────────────────────────────
 // Gender values use the Gender enum: 'MALE' or 'FEMALE' (not 'M'/'F')
+// birthDate is stored as TIMESTAMP(3) in UTC. Pass midnight UTC (e.g. new Date('2017-03-15'))
+// so the date is preserved correctly regardless of server timezone.
 
 const cohort1Data = [
   {
@@ -62,6 +64,15 @@ const cohort2Data = [
 async function main() {
   await prisma.$transaction(async (tx) => {
     // ── Cleanup (reverse FK order) ─────────────────────────────────────────
+    // Delete leaf → parent to satisfy FK constraints:
+    //   attendance → session, student
+    //   enrolment  → student, cohort
+    //   session    → cohort
+    //   cohort     → program, campus
+    //   campusStaff → campus, staff
+    //   student    → family
+    //   family, staff, program → campus / organisation
+    //   campus     → organisation
     await tx.attendance.deleteMany();
     await tx.enrolment.deleteMany();
     await tx.session.deleteMany();
@@ -190,7 +201,7 @@ async function main() {
         leadInstructorId: jake.id,
         scheduledAt: new Date('2026-02-18T05:00:00.000Z'), // Wed 4:00 PM AEDT — today
         durationMinutes: 75,
-        status: 'SCHEDULED',
+        status: 'COMPLETED',
       },
     });
 
@@ -252,7 +263,7 @@ async function main() {
       });
     }
 
-    // Session 2 (today, SCHEDULED): pre-populated PRESENT for demo/UI testing
+    // Session 2 (today, COMPLETED): all students PRESENT for demo/UI testing
     for (const student of cohort1Students) {
       await tx.attendance.create({
         data: { sessionId: session2.id, studentId: student.id, status: 'PRESENT' },

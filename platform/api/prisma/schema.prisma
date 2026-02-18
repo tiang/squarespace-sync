@@ -167,7 +167,7 @@ model Family {
   campusId        String
   campus          Campus   @relation(fields: [campusId], references: [id])
   name            String
-  primaryEmail    String
+  primaryEmail    String   @unique
   primaryPhone    String?
   addressStreet   String?
   addressCity     String?
@@ -178,7 +178,6 @@ model Family {
 
   students Student[]
 
-  @@unique([campusId, primaryEmail])
   @@map("families")
 }
 
