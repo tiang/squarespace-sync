@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const prisma = require('./db');
+const instructorRoutes = require('./routes/instructor');
+const sessionRoutes = require('./routes/sessions');
 
 const app = express();
 
@@ -9,6 +11,9 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+app.use('/api/v1', instructorRoutes);
+app.use('/api/v1', sessionRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {
