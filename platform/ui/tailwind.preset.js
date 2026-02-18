@@ -9,11 +9,16 @@ export default {
       colors: {
         brand: {
           DEFAULT: '#000000',
-          hover: '#1a1a1a',
+          muted: '#1a1a1a',
+        },
+        surface: {
+          DEFAULT: '#ffffff',
+          muted: '#f8fafc',
         },
       },
       borderRadius: {
         card: '1rem',
+        pill: '9999px',
       },
     },
   },
