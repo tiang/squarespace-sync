@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { get, put } from '../lib/api';
 import StudentRow from '../components/StudentRow';
 
@@ -16,6 +16,7 @@ function formatDateTime(isoString) {
 export default function RollCallPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: session, isLoading, isError } = useQuery({
     queryKey: ['session', id],
@@ -41,7 +42,10 @@ export default function RollCallPage() {
 
   const mutation = useMutation({
     mutationFn: (records) => put(`/api/v1/sessions/${id}/attendance`, { records }),
-    onSuccess: () => navigate('/instructor/dashboard'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session', id] });
+      navigate('/instructor/dashboard');
+    },
   });
 
   function handleMarkAll() {
