@@ -18,7 +18,7 @@ export default function SessionCard({ session }) {
   const { id, scheduledAt, durationMinutes, status, cohort, enrolledCount } = session;
 
   return (
-    <div className="border border-slate-100 p-8 rounded-2xl bg-white shadow-sm flex flex-col transition-all duration-200 hover:border-black hover:-translate-y-0.5 cursor-pointer">
+    <div onClick={() => navigate(`/instructor/session/${id}/attend`)} className="border border-slate-100 p-8 rounded-2xl bg-white shadow-sm flex flex-col transition-all duration-200 hover:border-black hover:-translate-y-0.5 cursor-pointer">
       <div className="flex items-start justify-between mb-6">
         <div>
           <span className="px-3 py-1 bg-slate-100 border border-slate-200 rounded text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2 inline-block">
