@@ -42,7 +42,7 @@ export default function StudentRow({ student, value, onChange }) {
               <input
                 type="radio"
                 name={student.id}
-                className="hidden peer"
+                className="sr-only peer"
                 checked={value.status === statusVal}
                 onChange={() => onChange({ status: statusVal })}
               />

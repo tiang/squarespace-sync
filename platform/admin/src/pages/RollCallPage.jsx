@@ -20,6 +20,8 @@ export default function RollCallPage() {
   const { data: session, isLoading } = useQuery({
     queryKey: ['session', id],
     queryFn: () => get(`/api/v1/sessions/${id}`),
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 
   // Local state: { [studentId]: { status: string | null, notes: string } }
