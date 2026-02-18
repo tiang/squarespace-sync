@@ -44,6 +44,13 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model Organisation {
@@ -55,6 +62,8 @@ model Organisation {
   campuses Campus[]
   staff    Staff[]
   programs Program[]
+
+  @@map("organisations")
 }
 
 model Campus {
@@ -72,6 +81,8 @@ model Campus {
   campusStaff CampusStaff[]
   cohorts     Cohort[]
   families    Family[]
+
+  @@map("campuses")
 }
 
 model Staff {
@@ -87,6 +98,8 @@ model Staff {
 
   campusStaff CampusStaff[]
   ledSessions Session[]     @relation("LeadInstructor")
+
+  @@map("staff")
 }
 
 model CampusStaff {
@@ -96,6 +109,7 @@ model CampusStaff {
   staff    Staff  @relation(fields: [staffId], references: [id])
 
   @@id([campusId, staffId])
+  @@map("campus_staff")
 }
 
 model Program {
@@ -108,6 +122,8 @@ model Program {
   updatedAt      DateTime     @updatedAt
 
   cohorts Cohort[]
+
+  @@map("programs")
 }
 
 model Cohort {
@@ -125,6 +141,8 @@ model Cohort {
 
   sessions   Session[]
   enrolments Enrolment[]
+
+  @@map("cohorts")
 }
 
 model Session {
@@ -140,6 +158,8 @@ model Session {
   updatedAt        DateTime      @updatedAt
 
   attendances Attendance[]
+
+  @@map("sessions")
 }
 
 model Family {
@@ -157,6 +177,9 @@ model Family {
   updatedAt       DateTime @updatedAt
 
   students Student[]
+
+  @@unique([campusId, primaryEmail])
+  @@map("families")
 }
 
 model Student {
@@ -166,7 +189,7 @@ model Student {
   firstName      String
   lastName       String
   birthDate      DateTime
-  gender         String?
+  gender         Gender?
   healthConcerns String?
   allowPhoto     Boolean   @default(true)
   createdAt      DateTime  @default(now())
@@ -174,6 +197,8 @@ model Student {
 
   enrolments  Enrolment[]
   attendances Attendance[]
+
+  @@map("students")
 }
 
 model Enrolment {
@@ -191,6 +216,7 @@ model Enrolment {
   updatedAt  DateTime        @updatedAt
 
   @@unique([studentId, cohortId])
+  @@map("enrolments")
 }
 
 model Attendance {
@@ -205,4 +231,5 @@ model Attendance {
   updatedAt DateTime         @updatedAt
 
   @@unique([sessionId, studentId])
+  @@map("attendance")
 }
