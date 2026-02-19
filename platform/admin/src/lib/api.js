@@ -17,6 +17,7 @@ export async function put(path, body) {
     try { const errorBody = await res.json(); if (errorBody.error) message = errorBody.error; } catch {}
     throw new Error(message);
   }
+  return res.json();
 }
 
 export async function post(path, body) {

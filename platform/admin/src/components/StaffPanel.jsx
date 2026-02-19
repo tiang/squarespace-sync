@@ -53,7 +53,7 @@ export default function StaffPanel({ staff, onClose }) {
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setApiError(null);
     const data = { ...form };
-    if (!data.phone) delete data.phone;
+    if (data.phone === '') data.phone = null;
     mutation.mutate(data);
   }
 
