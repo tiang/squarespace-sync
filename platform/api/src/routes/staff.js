@@ -54,6 +54,8 @@ router.post('/staff', async (req, res, next) => {
       return res.status(400).json({ error: `role must be one of: ${VALID_ROLES.join(', ')}` });
     }
 
+    // TODO: derive organisationId from authenticated session once auth is implemented
+    // For now, POST will fail against a real DB without organisationId
     const staff = await prisma.staff.create({
       data: { firstName, lastName, email, phone: phone || null, role },
     });
@@ -88,6 +90,10 @@ router.patch('/staff/:id', async (req, res, next) => {
     if (email !== undefined) data.email = email;
     if (phone !== undefined) data.phone = phone;
     if (role !== undefined) data.role = role;
+
+    if (Object.keys(data).length === 0) {
+      return res.status(400).json({ error: 'No updatable fields provided' });
+    }
 
     const staff = await prisma.staff.update({ where: { id }, data });
     res.json(staff);

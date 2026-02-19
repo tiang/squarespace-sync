@@ -8,6 +8,11 @@ const AVATAR_COLORS = [
   'bg-violet-500', 'bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
 ];
 
+function avatarColor(id) {
+  const hash = id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
 function initials(firstName, lastName) {
   return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase();
 }
@@ -20,6 +25,7 @@ export default function StaffDirectory() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelStaff, setPanelStaff] = useState(null); // null = create mode, object = edit mode
   const [deactivatingId, setDeactivatingId] = useState(null);
+  const [deactivateError, setDeactivateError] = useState(null);
 
   const { data: staff = [], isLoading, isError } = useQuery({
     queryKey: ['staff', { roleFilter, search, showInactive }],
@@ -35,7 +41,9 @@ export default function StaffDirectory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff'] });
       setDeactivatingId(null);
+      setDeactivateError(null);
     },
+    onError: (err) => setDeactivateError(err.message),
   });
 
   function openCreate() {
@@ -99,6 +107,13 @@ export default function StaffDirectory() {
         </label>
       </div>
 
+      {deactivateError && (
+        <div className="mb-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm px-4 py-3 rounded-lg flex items-center justify-between">
+          <span>{deactivateError}</span>
+          <button onClick={() => setDeactivateError(null)} className="ml-4 text-rose-500 hover:text-rose-700">✕</button>
+        </div>
+      )}
+
       {/* Loading skeleton */}
       {isLoading && (
         <div className="space-y-3">
@@ -134,7 +149,7 @@ export default function StaffDirectory() {
                   </td>
                 </tr>
               )}
-              {staff.map((member, i) => (
+              {staff.map((member) => (
                 <tr
                   key={member.id}
                   onClick={() => member.isActive && openEdit(member)}
@@ -142,7 +157,7 @@ export default function StaffDirectory() {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <span className={`w-8 h-8 rounded-full text-white text-xs font-semibold flex items-center justify-center shrink-0 ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}>
+                      <span className={`w-8 h-8 rounded-full text-white text-xs font-semibold flex items-center justify-center shrink-0 ${avatarColor(member.id)}`}>
                         {initials(member.firstName, member.lastName)}
                       </span>
                       <span className="font-medium text-slate-800">{member.firstName} {member.lastName}</span>

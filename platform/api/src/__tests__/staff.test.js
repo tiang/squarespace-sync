@@ -157,6 +157,11 @@ describe('PATCH /api/v1/staff/:id', () => {
     const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({ email: 'taken@example.com' });
     expect(res.status).toBe(409);
   });
+
+  it('returns 400 when body is empty', async () => {
+    const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({});
+    expect(res.status).toBe(400);
+  });
 });
 
 describe('DELETE /api/v1/staff/:id', () => {
