@@ -26,9 +26,9 @@ export default function ChildCard({ student, index }) {
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
 
   return (
-    <div className="p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-6 transition-all duration-200 hover:border-slate-200 hover:-translate-y-0.5">
+    <div className="dashboard-card p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-0 transition-all duration-200">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
           <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${avatarColor}`}>
             {getInitials(student.firstName, student.lastName)}
@@ -47,30 +47,36 @@ export default function ChildCard({ student, index }) {
 
       {/* Enrolment info or empty state */}
       {enrolment ? (
-        <div className="space-y-3">
+        <div className="space-y-4 mb-8">
           <div className="flex items-center justify-between text-sm">
             <span className="text-slate-500">Current Course</span>
             <span className="font-medium text-right">{enrolment.cohort.name}</span>
           </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-slate-500">Program</span>
-            <span className="font-medium">{enrolment.cohort.program.name}</span>
+          {/* Progress bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-slate-400">Progress</span>
+              <span className="font-bold text-slate-500 italic">Tracking soon</span>
+            </div>
+            <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-black rounded-full" style={{ width: '0%' }} />
+            </div>
           </div>
           {enrolment.cohort.nextSession && (
-            <div className="flex items-center gap-2 text-sm text-slate-500 pt-1">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
               <Icon icon="lucide:calendar" className="w-4 h-4 shrink-0" />
               <span>Next: {formatDateTime(enrolment.cohort.nextSession.scheduledAt)}</span>
             </div>
           )}
         </div>
       ) : (
-        <p className="text-sm text-slate-400 italic">No active enrolments</p>
+        <p className="text-sm text-slate-400 italic mb-8">No active enrolments</p>
       )}
 
       {/* CTA */}
       <Link
         to={`/parent/children/${student.id}`}
-        className="block w-full text-center py-3 border border-slate-200 rounded-xl text-sm font-bold hover:bg-white transition-colors"
+        className="block w-full text-center py-3 border border-slate-200 rounded-xl text-sm font-bold hover:bg-white transition-all"
       >
         View Detailed Progress
       </Link>
