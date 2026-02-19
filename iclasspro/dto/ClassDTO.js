@@ -38,6 +38,29 @@ class ClassDTO {
     this.instructors = instructors;
     this.occupancy = occupancy;
   }
+
+  /**
+   * Map a ClassDTO to Airtable field names for ICP_Classes table
+   * @param {ClassDTO} cls
+   * @param {string[]} [studentAirtableRecordIds] - Airtable record IDs of enrolled students
+   * @returns {Object} Airtable fields object
+   */
+  static toAirtableFields(cls, studentAirtableRecordIds) {
+    const fields = {
+      "Class ID": String(cls.id),
+      "Class Name": cls.name || "",
+      "Schedule": cls.durationSchedule
+        ? Object.values(cls.durationSchedule).join(", ")
+        : "",
+      "Room": cls.room || "",
+      "Instructors": cls.instructors ? cls.instructors.join(", ") : "",
+      "Max Capacity": cls.occupancy?.max || 0,
+    };
+    if (studentAirtableRecordIds && studentAirtableRecordIds.length > 0) {
+      fields["ICP_Students"] = studentAirtableRecordIds;
+    }
+    return fields;
+  }
 }
 
 module.exports = ClassDTO;

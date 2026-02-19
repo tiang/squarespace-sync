@@ -1,0 +1,57 @@
+services:
+  firebase:
+    image: andreysenov/firebase-tools:latest
+    command: >
+      firebase emulators:start --only auth,firestore
+        --project rocket-academy-local
+    ports:
+      - "4000:4000"   # Emulator UI
+      - "8080:8080"   # Firestore
+      - "9099:9099"   # Auth
+    volumes:
+      - ./firebase.json:/home/node/firebase.json:ro
+      - ./.firebaserc:/home/node/.firebaserc:ro
+      - firebase_data:/home/node/.cache/firebase/emulators
+    working_dir: /home/node
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000', r => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-platform}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-localdev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-platform}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  gcs:
+    image: fsouza/fake-gcs-server:latest
+    command: ["-scheme", "http", "-port", "4443", "-external-url", "http://localhost:4443"]
+    ports:
+      - "4443:4443"
+    volumes:
+      - gcs_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4443/storage/v1/b"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  firebase_data:
+  postgres_data:
+  gcs_data:

@@ -14,13 +14,18 @@
     "dashboard:build": "cd dashboard && npm run build",
     "dashboard:start": "node dashboard/server/index.js",
     "install:all": "npm run sync:install && npm run dashboard:install",
-    "iclasspro": "node iclasspro/index.js"
+    "iclasspro:test": "cd iclasspro && npx jest",
+    "iclasspro": "node iclasspro/index.js",
+    "iclasspro:setup": "node iclasspro/commands/create-airtable-tables.js",
+    "iclasspro:airtable": "node iclasspro/commands/sync-airtable.js",
+    "iclasspro:full": "node iclasspro/commands/sync-full.js"
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
     "nodemon": "^3.1.0"
   },
   "dependencies": {
+    "airtable": "^0.12.2",
     "axios": "^1.13.5",
     "dotenv": "^17.3.1",
     "winston": "^3.19.0"

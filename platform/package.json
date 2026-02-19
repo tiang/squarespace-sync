@@ -1,0 +1,5 @@
+{
+  "name": "rocket-academy-platform",
+  "private": true,
+  "workspaces": ["ui", "admin", "parent-portal"]
+}

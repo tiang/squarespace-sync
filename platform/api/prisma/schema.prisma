@@ -1,0 +1,231 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum StaffRole {
+  ADMIN
+  LEAD_INSTRUCTOR
+  TEACHING_ASSISTANT
+}
+
+enum CohortStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum SessionStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum EnrolmentStatus {
+  ACTIVE
+  TRIAL
+  WAITLIST
+  DROPPED
+  COMPLETED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
+model Organisation {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  campuses Campus[]
+  staff    Staff[]
+  programs Program[]
+
+  @@map("organisations")
+}
+
+model Campus {
+  id              String       @id @default(uuid())
+  organisationId  String
+  organisation    Organisation @relation(fields: [organisationId], references: [id])
+  name            String
+  addressStreet   String?
+  addressCity     String?
+  addressState    String?
+  addressPostcode String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  campusStaff CampusStaff[]
+  cohorts     Cohort[]
+
+  @@map("campuses")
+}
+
+model Staff {
+  id             String       @id @default(uuid())
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  firstName      String
+  lastName       String
+  email          String       @unique
+  role           StaffRole
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  campusStaff CampusStaff[]
+  ledSessions Session[]     @relation("LeadInstructor")
+
+  @@map("staff")
+}
+
+model CampusStaff {
+  campusId String
+  staffId  String
+  campus   Campus @relation(fields: [campusId], references: [id])
+  staff    Staff  @relation(fields: [staffId], references: [id])
+
+  @@id([campusId, staffId])
+  @@map("campus_staff")
+}
+
+model Program {
+  id             String       @id @default(uuid())
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id])
+  name           String
+  description    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  cohorts Cohort[]
+
+  @@map("programs")
+}
+
+model Cohort {
+  id          String       @id @default(uuid())
+  programId   String
+  program     Program      @relation(fields: [programId], references: [id])
+  campusId    String
+  campus      Campus       @relation(fields: [campusId], references: [id])
+  name        String
+  status      CohortStatus
+  room        String?
+  maxCapacity Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  sessions   Session[]
+  enrolments Enrolment[]
+
+  @@map("cohorts")
+}
+
+model Session {
+  id               String        @id @default(uuid())
+  cohortId         String
+  cohort           Cohort        @relation(fields: [cohortId], references: [id])
+  leadInstructorId String
+  leadInstructor   Staff         @relation("LeadInstructor", fields: [leadInstructorId], references: [id])
+  scheduledAt      DateTime
+  durationMinutes  Int
+  status           SessionStatus
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  attendances Attendance[]
+
+  @@map("sessions")
+}
+
+model Family {
+  id              String   @id @default(uuid())
+  name            String
+  primaryEmail    String   @unique
+  primaryPhone    String?
+  addressStreet   String?
+  addressCity     String?
+  addressState    String?
+  addressPostcode String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  students Student[]
+
+  @@map("families")
+}
+
+model Student {
+  id             String    @id @default(uuid())
+  familyId       String
+  family         Family    @relation(fields: [familyId], references: [id])
+  firstName      String
+  lastName       String
+  birthDate      DateTime
+  gender         Gender?
+  healthConcerns String?
+  allowPhoto     Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  enrolments  Enrolment[]
+  attendances Attendance[]
+
+  @@map("students")
+}
+
+model Enrolment {
+  id         String          @id @default(uuid())
+  studentId  String
+  student    Student         @relation(fields: [studentId], references: [id])
+  cohortId   String
+  cohort     Cohort          @relation(fields: [cohortId], references: [id])
+  status     EnrolmentStatus
+  startDate  DateTime
+  dropDate   DateTime?
+  isTrial    Boolean         @default(false)
+  isWaitlist Boolean         @default(false)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@unique([studentId, cohortId])
+  @@map("enrolments")
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  sessionId String
+  session   Session          @relation(fields: [sessionId], references: [id])
+  studentId String
+  student   Student          @relation(fields: [studentId], references: [id])
+  status    AttendanceStatus
+  notes     String?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  @@unique([sessionId, studentId])
+  @@map("attendances")
+}

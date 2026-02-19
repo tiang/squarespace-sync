@@ -20,7 +20,9 @@ class StudentMapper {
     ];
 
     for (const { field, name } of requiredFields) {
-      if (!rawStudent[field]) {
+      const value = rawStudent[field];
+      // Explicitly check for missing or empty values
+      if (value === undefined || value === null || value === "") {
         const studentName = `${rawStudent.firstName || "unknown"} ${rawStudent.lastName || "unknown"}`;
         throw new Error(
           `StudentMapper: Missing required field '${name}' for student '${studentName}'`
@@ -60,11 +62,11 @@ class StudentMapper {
 
     // Extract flags with defaults
     const flags = {
-      medical: rawStudent.flags?.medical || false,
-      allowImage: rawStudent.flags?.allowImage || false,
-      trial: rawStudent.flags?.trial || false,
-      waitlist: rawStudent.flags?.waitlist || false,
-      makeup: rawStudent.flags?.makeup || false,
+      medical: rawStudent.flags?.medical ?? false,
+      allowImage: rawStudent.flags?.allowImage ?? false,
+      trial: rawStudent.flags?.trial ?? false,
+      waitlist: rawStudent.flags?.waitlist ?? false,
+      makeup: rawStudent.flags?.makeup ?? false,
     };
 
     return new StudentDTO(

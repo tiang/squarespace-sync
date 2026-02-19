@@ -45,6 +45,7 @@ class FamilyMapper {
       const guardianPhone = phones.find((p) => p.guardianId === guardian.id);
 
       return {
+        guardianId: guardian.id,
         firstName: guardian.firstName || null,
         lastName: guardian.lastName || null,
         email: guardianEmail ? guardianEmail.email : null,

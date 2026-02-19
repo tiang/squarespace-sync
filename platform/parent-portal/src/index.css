@@ -1,0 +1,17 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&f[]=general-sans@600,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+h1, h2, h3 {
+  font-family: 'General Sans', sans-serif;
+}
+
+.dashboard-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
