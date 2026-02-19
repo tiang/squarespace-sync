@@ -17,7 +17,8 @@ services:
       FIRESTORE_EMULATOR_HOST: firebase:8080
       FIREBASE_AUTH_EMULATOR_HOST: firebase:9099
       GCS_API_ENDPOINT: http://gcs:4443
-      CORS_ORIGIN: http://localhost:5173
+      # 5173=admin, 5174=parent-portal (Docker), 5175=parent-portal fallback (local dev when 5174 is taken)
+      CORS_ORIGIN: http://localhost:5173,http://localhost:5174,http://localhost:5175
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,6 +40,23 @@ services:
     volumes:
       - ./admin:/app
       - admin_node_modules:/app/node_modules
+      - ./ui:/ui
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      api:
+        condition: service_healthy
+
+  parent-portal:
+    build:
+      context: ./parent-portal
+      target: dev
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./parent-portal:/app
+      - parent_portal_node_modules:/app/node_modules
+      - ./ui:/ui
     environment:
       VITE_API_URL: http://localhost:3001
     depends_on:
@@ -48,3 +66,4 @@ services:
 volumes:
   api_node_modules:
   admin_node_modules:
+  parent_portal_node_modules:

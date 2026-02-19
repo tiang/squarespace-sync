@@ -1,4 +1,4 @@
-.PHONY: infra up down logs db-reset
+.PHONY: infra up down logs db-reset admin parent-portal
 
 ENV_FILE := .env
 
@@ -23,3 +23,11 @@ db-reset:
 	docker compose -f docker-compose.yml --env-file $(ENV_FILE) stop postgres
 	docker volume rm platform_postgres_data || true
 	docker compose -f docker-compose.yml --env-file $(ENV_FILE) up -d postgres
+
+# Start admin dev server locally (without Docker)
+admin:
+	cd admin && npm run dev
+
+# Start parent portal dev server locally (without Docker)
+parent-portal:
+	cd parent-portal && npm run dev
