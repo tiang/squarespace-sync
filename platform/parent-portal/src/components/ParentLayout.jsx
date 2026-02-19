@@ -33,10 +33,10 @@ export default function ParentLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white text-[#1a1a1a]" style={{ fontFamily: "'Satoshi', sans-serif" }}>
+    <div className="min-h-screen bg-white text-brand-muted font-sans">
       {/* Mobile top bar */}
       <div className="lg:hidden flex items-center justify-between px-6 py-4 border-b border-slate-100">
-        <span className="text-lg font-bold" style={{ fontFamily: "'General Sans', sans-serif" }}>
+        <span className="text-lg font-bold font-heading">
           🚀 Rocket Academy
         </span>
         <button onClick={() => setDrawerOpen(true)} aria-label="Open menu">
@@ -53,7 +53,7 @@ export default function ParentLayout() {
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-8">
-              <span className="font-bold" style={{ fontFamily: "'General Sans', sans-serif" }}>
+              <span className="font-bold font-heading">
                 🚀 Rocket Academy
               </span>
               <button onClick={() => setDrawerOpen(false)} aria-label="Close menu">
@@ -73,7 +73,7 @@ export default function ParentLayout() {
         {/* Desktop sidebar */}
         <aside className="hidden lg:flex flex-col w-60 min-h-screen border-r border-slate-100 px-4 py-8 shrink-0">
           <div className="mb-10 px-4">
-            <span className="text-xl font-bold" style={{ fontFamily: "'General Sans', sans-serif" }}>
+            <span className="text-xl font-bold font-heading">
               🚀 Rocket Academy
             </span>
           </div>

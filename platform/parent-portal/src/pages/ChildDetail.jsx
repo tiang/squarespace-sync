@@ -8,6 +8,13 @@ import { Badge } from '@ra/ui';
 
 const TABS = ['Progress', 'Attendance', 'Projects'];
 
+const AVATAR_COLORS = [
+  'bg-blue-100 text-blue-700',
+  'bg-purple-100 text-purple-700',
+  'bg-emerald-100 text-emerald-700',
+  'bg-amber-100 text-amber-700',
+];
+
 function formatDate(isoString) {
   return new Date(isoString).toLocaleDateString('en-AU', {
     day: 'numeric', month: 'short', year: 'numeric',
@@ -15,12 +22,14 @@ function formatDate(isoString) {
 }
 
 function AttendanceTab({ studentId }) {
-  const { data: records = [], isLoading } = useQuery({
+  const { data: records = [], isLoading, isError } = useQuery({
     queryKey: QUERY_KEYS.attendance(studentId),
     queryFn: () => get(`/api/v1/parent/stub/students/${studentId}/attendance`),
   });
 
   if (isLoading) return <div className="animate-pulse h-32 bg-slate-50 rounded-2xl" />;
+
+  if (isError) return <p className="text-rose-500 text-sm">Failed to load attendance. Is the API running?</p>;
 
   if (records.length === 0) {
     return (
@@ -77,6 +86,8 @@ export default function ChildDetail() {
 
   const student = family?.students.find(s => s.id === id);
   const enrolment = student?.enrolments[0];
+  const studentIndex = family?.students.findIndex(s => s.id === id) ?? 0;
+  const avatarColor = AVATAR_COLORS[studentIndex % AVATAR_COLORS.length];
 
   return (
     <div>
@@ -96,7 +107,7 @@ export default function ChildDetail() {
         <>
           {/* Student header */}
           <div className="flex items-start gap-6 mb-10">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-2xl shrink-0">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center font-bold text-2xl shrink-0 ${avatarColor}`}>
               {student.firstName?.[0] ?? ''}{student.lastName?.[0] ?? ''}
             </div>
             <div>
@@ -148,7 +159,7 @@ export default function ChildDetail() {
         </>
       )}
 
-      {!isLoading && !student && (
+      {!isLoading && !isError && !student && (
         <p className="text-rose-500 text-sm">Student not found.</p>
       )}
     </div>
