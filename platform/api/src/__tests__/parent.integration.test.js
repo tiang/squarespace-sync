@@ -123,7 +123,7 @@ describe('Parent portal stub routes', () => {
         expect(s.id).toBeDefined();
         expect(s.scheduledAt).toBeDefined();
         expect(typeof s.durationMinutes).toBe('number');
-        expect(['SCHEDULED', 'CANCELLED', 'COMPLETED']).toContain(s.status);
+        expect(['SCHEDULED', 'CANCELLED']).toContain(s.status);
         expect(s.cohortName).toBeDefined();
         expect(s.campusName).toBeDefined();
         expect(Array.isArray(s.students)).toBe(true);
