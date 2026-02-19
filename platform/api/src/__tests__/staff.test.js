@@ -121,3 +121,40 @@ describe('POST /api/v1/staff', () => {
     expect(res.body.error).toMatch(/already exists/i);
   });
 });
+
+describe('PATCH /api/v1/staff/:id', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    prisma.staff.findUnique.mockResolvedValue(FAKE_STAFF);
+    prisma.staff.update.mockResolvedValue({ ...FAKE_STAFF, firstName: 'Updated' });
+  });
+
+  it('returns 200 with updated staff', async () => {
+    const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({ firstName: 'Updated' });
+    expect(res.status).toBe(200);
+    expect(res.body.firstName).toBe('Updated');
+  });
+
+  it('returns 404 when staff not found', async () => {
+    prisma.staff.findUnique.mockResolvedValue(null);
+    const res = await request(app).patch('/api/v1/staff/bad-id').send({ firstName: 'X' });
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 when staff is inactive', async () => {
+    prisma.staff.findUnique.mockResolvedValue({ ...FAKE_STAFF, isActive: false });
+    const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({ firstName: 'X' });
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 400 when role is invalid', async () => {
+    const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({ role: 'MANAGER' });
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 409 on duplicate email', async () => {
+    prisma.staff.update.mockRejectedValue({ code: 'P2002' });
+    const res = await request(app).patch('/api/v1/staff/staff-uuid-1').send({ email: 'taken@example.com' });
+    expect(res.status).toBe(409);
+  });
+});
