@@ -107,4 +107,46 @@ describe('Parent portal stub routes', () => {
       expect(res.status).toBe(200);
     });
   });
+
+  describe('GET /api/v1/parent/stub/sessions', () => {
+    it('returns 200 with an array', async () => {
+      const res = await request(app).get('/api/v1/parent/stub/sessions');
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+    });
+
+    it('each session has required fields', async () => {
+      const res = await request(app).get('/api/v1/parent/stub/sessions');
+      expect(res.status).toBe(200);
+      if (res.body.length > 0) {
+        const s = res.body[0];
+        expect(s.id).toBeDefined();
+        expect(s.scheduledAt).toBeDefined();
+        expect(typeof s.durationMinutes).toBe('number');
+        expect(['SCHEDULED', 'CANCELLED', 'COMPLETED']).toContain(s.status);
+        expect(s.cohortName).toBeDefined();
+        expect(s.campusName).toBeDefined();
+        expect(Array.isArray(s.students)).toBe(true);
+      }
+    });
+
+    it('returns only sessions scheduledAt >= today', async () => {
+      const res = await request(app).get('/api/v1/parent/stub/sessions');
+      expect(res.status).toBe(200);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      for (const s of res.body) {
+        expect(new Date(s.scheduledAt).getTime()).toBeGreaterThanOrEqual(today.getTime());
+      }
+    });
+
+    it('sessions are ordered by scheduledAt ascending', async () => {
+      const res = await request(app).get('/api/v1/parent/stub/sessions');
+      expect(res.status).toBe(200);
+      for (let i = 1; i < res.body.length; i++) {
+        expect(new Date(res.body[i].scheduledAt).getTime())
+          .toBeGreaterThanOrEqual(new Date(res.body[i - 1].scheduledAt).getTime());
+      }
+    });
+  });
 });

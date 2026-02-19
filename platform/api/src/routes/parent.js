@@ -160,6 +160,70 @@ router.get('/parent/stub/messages', async (req, res, next) => {
   }
 });
 
+// ── GET /api/v1/parent/stub/sessions ─────────────────────────────────────────
+// Returns all upcoming sessions (scheduledAt >= today) for all cohorts the
+// stub family's students are actively enrolled in. Ordered by scheduledAt asc.
+// Includes SCHEDULED and CANCELLED sessions (not COMPLETED — those are past).
+router.get('/parent/stub/sessions', async (req, res, next) => {
+  try {
+    const family = await getStubFamily(res);
+    if (!family) return;
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const sessions = await prisma.session.findMany({
+      where: {
+        scheduledAt: { gte: startOfToday },
+        status: { not: 'COMPLETED' },
+        cohort: {
+          enrolments: {
+            some: {
+              student: { familyId: family.id },
+              status: { in: ['ACTIVE', 'TRIAL'] },
+            },
+          },
+        },
+      },
+      include: {
+        cohort: {
+          select: {
+            name: true,
+            campus: { select: { name: true } },
+            enrolments: {
+              where: {
+                student: { familyId: family.id },
+                status: { in: ['ACTIVE', 'TRIAL'] },
+              },
+              select: {
+                student: { select: { id: true, firstName: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { scheduledAt: 'asc' },
+    });
+
+    res.json(
+      sessions.map(s => ({
+        id:              s.id,
+        scheduledAt:     s.scheduledAt,
+        durationMinutes: s.durationMinutes,
+        status:          s.status,
+        cohortName:      s.cohort.name,
+        campusName:      s.cohort.campus.name,
+        students:        s.cohort.enrolments.map(e => ({
+          id:        e.student.id,
+          firstName: e.student.firstName,
+        })),
+      }))
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
 // ── PATCH /api/v1/parent/stub ─────────────────────────────────────────────────
 // Updates contact details for the stub family. Only whitelisted fields.
 router.patch('/parent/stub', async (req, res, next) => {
