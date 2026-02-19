@@ -158,3 +158,37 @@ describe('PATCH /api/v1/staff/:id', () => {
     expect(res.status).toBe(409);
   });
 });
+
+describe('DELETE /api/v1/staff/:id', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    prisma.staff.findUnique.mockResolvedValue(FAKE_STAFF);
+    prisma.staff.update.mockResolvedValue({ ...FAKE_STAFF, isActive: false });
+  });
+
+  it('returns 200 with deactivation message', async () => {
+    const res = await request(app).delete('/api/v1/staff/staff-uuid-1');
+    expect(res.status).toBe(200);
+    expect(res.body.message).toMatch(/deactivated/i);
+  });
+
+  it('calls update with isActive: false', async () => {
+    await request(app).delete('/api/v1/staff/staff-uuid-1');
+    expect(prisma.staff.update).toHaveBeenCalledWith({
+      where: { id: 'staff-uuid-1' },
+      data: { isActive: false },
+    });
+  });
+
+  it('returns 404 when staff not found', async () => {
+    prisma.staff.findUnique.mockResolvedValue(null);
+    const res = await request(app).delete('/api/v1/staff/bad-id');
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 when staff is already inactive', async () => {
+    prisma.staff.findUnique.mockResolvedValue({ ...FAKE_STAFF, isActive: false });
+    const res = await request(app).delete('/api/v1/staff/staff-uuid-1');
+    expect(res.status).toBe(404);
+  });
+});

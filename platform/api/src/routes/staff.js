@@ -99,4 +99,21 @@ router.patch('/staff/:id', async (req, res, next) => {
   }
 });
 
+// DELETE /api/v1/staff/:id  (soft-delete)
+router.delete('/staff/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const existing = await prisma.staff.findUnique({ where: { id } });
+    if (!existing || !existing.isActive) {
+      return res.status(404).json({ error: 'Staff member not found' });
+    }
+
+    await prisma.staff.update({ where: { id }, data: { isActive: false } });
+    res.json({ message: 'Staff member deactivated' });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
