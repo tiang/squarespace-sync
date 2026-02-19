@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@iconify/react';
 import { get } from '../lib/api.js';
@@ -27,8 +28,10 @@ export default function ParentDashboard() {
   });
 
   // Collect upcoming sessions from all students' enrolments
-  const upcomingSessions = family
-    ? family.students.flatMap(student =>
+  const upcomingSessions = useMemo(() => {
+    if (!family) return [];
+    return family.students
+      .flatMap(student =>
         student.enrolments
           .filter(e => e.cohort.nextSession)
           .map(e => ({
@@ -36,8 +39,9 @@ export default function ParentDashboard() {
             cohortName: e.cohort.name,
             scheduledAt: e.cohort.nextSession.scheduledAt,
           }))
-      ).sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt))
-    : [];
+      )
+      .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+  }, [family]);
 
   return (
     <div>
@@ -55,7 +59,7 @@ export default function ParentDashboard() {
           )}
         </div>
         <div className="flex gap-3">
-          <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-full text-sm font-bold hover:bg-slate-800 transition-all">
+          <button type="button" title="Course enrolment coming soon" disabled className="inline-flex items-center gap-2 px-5 py-2.5 bg-black text-white rounded-full text-sm font-bold opacity-50 cursor-not-allowed">
             <Icon icon="lucide:plus" className="w-4 h-4" />
             Enroll in New Class
           </button>
@@ -152,7 +156,7 @@ export default function ParentDashboard() {
               </div>
             )}
 
-            {!isLoading && upcomingSessions.length === 0 && (
+            {!isLoading && !isError && upcomingSessions.length === 0 && (
               <p className="text-sm text-slate-400 italic">No upcoming sessions scheduled.</p>
             )}
 
@@ -177,7 +181,7 @@ export default function ParentDashboard() {
               </div>
             )}
 
-            <button className="w-full mt-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <button type="button" title="Calendar view coming soon" disabled className="w-full mt-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold opacity-50 cursor-not-allowed">
               View Full Calendar
             </button>
           </div>
@@ -189,7 +193,7 @@ export default function ParentDashboard() {
               <p className="text-slate-400 text-sm mb-6">
                 Join our parent community to discuss curriculum and future paths.
               </p>
-              <button className="inline-flex items-center gap-2 text-sm font-bold border-b border-white pb-1 hover:text-slate-300 hover:border-slate-300 transition-all">
+              <button type="button" title="Community coming soon" disabled className="inline-flex items-center gap-2 text-sm font-bold border-b border-white pb-1 opacity-60 cursor-not-allowed">
                 Explore Community
               </button>
             </div>

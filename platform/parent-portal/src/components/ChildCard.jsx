@@ -26,7 +26,7 @@ export default function ChildCard({ student, index }) {
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
 
   return (
-    <div className="dashboard-card p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col gap-0 transition-all duration-200">
+    <div className="dashboard-card p-6 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div className="flex items-center gap-4">
@@ -52,15 +52,13 @@ export default function ChildCard({ student, index }) {
             <span className="text-slate-500">Current Course</span>
             <span className="font-medium text-right">{enrolment.cohort.name}</span>
           </div>
-          {/* Progress bar */}
+          {/* Progress bar — track only until module progress data is available */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400">Progress</span>
-              <span className="font-bold text-slate-500 italic">Tracking soon</span>
+              <span className="text-slate-400 italic">Tracking soon</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-              <div className="h-full bg-black rounded-full" style={{ width: '0%' }} />
-            </div>
+            <div className="w-full h-1.5 bg-slate-200 rounded-full" />
           </div>
           {enrolment.cohort.nextSession && (
             <div className="flex items-center gap-2 text-sm text-slate-500">
