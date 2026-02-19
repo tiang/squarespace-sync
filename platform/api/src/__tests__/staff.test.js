@@ -83,3 +83,41 @@ describe('GET /api/v1/staff', () => {
     );
   });
 });
+
+describe('POST /api/v1/staff', () => {
+  const validBody = {
+    firstName: 'Mia',
+    lastName: 'Chen',
+    email: 'mia@rocketacademy.edu.au',
+    role: 'LEAD_INSTRUCTOR',
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    prisma.staff.create.mockResolvedValue({ ...FAKE_STAFF });
+  });
+
+  it('returns 201 with the created staff', async () => {
+    const res = await request(app).post('/api/v1/staff').send(validBody);
+    expect(res.status).toBe(201);
+    expect(res.body.email).toBe('mia@rocketacademy.edu.au');
+  });
+
+  it('returns 400 when required fields are missing', async () => {
+    const res = await request(app).post('/api/v1/staff').send({ firstName: 'Mia' });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it('returns 400 when role is not a valid enum value', async () => {
+    const res = await request(app).post('/api/v1/staff').send({ ...validBody, role: 'MANAGER' });
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 409 on duplicate email', async () => {
+    prisma.staff.create.mockRejectedValue({ code: 'P2002' });
+    const res = await request(app).post('/api/v1/staff').send(validBody);
+    expect(res.status).toBe(409);
+    expect(res.body.error).toMatch(/already exists/i);
+  });
+});

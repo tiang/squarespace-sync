@@ -41,4 +41,30 @@ router.get('/staff', async (req, res, next) => {
   }
 });
 
+// POST /api/v1/staff
+router.post('/staff', async (req, res, next) => {
+  try {
+    const { firstName, lastName, email, phone, role } = req.body;
+
+    if (!firstName || !lastName || !email || !role) {
+      return res.status(400).json({ error: 'firstName, lastName, email, and role are required' });
+    }
+
+    if (!VALID_ROLES.includes(role)) {
+      return res.status(400).json({ error: `role must be one of: ${VALID_ROLES.join(', ')}` });
+    }
+
+    const staff = await prisma.staff.create({
+      data: { firstName, lastName, email, phone: phone || null, role },
+    });
+
+    res.status(201).json(staff);
+  } catch (err) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({ error: 'A staff member with this email already exists' });
+    }
+    next(err);
+  }
+});
+
 module.exports = router;
