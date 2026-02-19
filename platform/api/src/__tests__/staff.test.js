@@ -67,4 +67,19 @@ describe('GET /api/v1/staff', () => {
     expect(callArg.where.OR).toBeDefined();
     expect(callArg.where.OR).toHaveLength(3);
   });
+
+  it('returns 400 when role param is not a valid enum value', async () => {
+    const res = await request(app).get('/api/v1/staff?role=GARBAGE');
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBeDefined();
+  });
+
+  it('orders results by lastName ascending', async () => {
+    await request(app).get('/api/v1/staff');
+    expect(prisma.staff.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: { lastName: 'asc' },
+      })
+    );
+  });
 });

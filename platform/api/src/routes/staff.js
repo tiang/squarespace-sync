@@ -16,6 +16,9 @@ router.get('/staff', async (req, res, next) => {
     }
 
     if (role) {
+      if (!VALID_ROLES.includes(role)) {
+        return res.status(400).json({ error: `role must be one of: ${VALID_ROLES.join(', ')}` });
+      }
       where.role = role;
     }
 
