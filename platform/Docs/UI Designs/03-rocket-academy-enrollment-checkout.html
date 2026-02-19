@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rocket Academy | Enrollment Checkout</title>
+  <meta name="view-transition" content="same-origin">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link rel="prefetch" href="https://p.superdesign.dev/draft/f80206c5-92d2-4e4b-8cf8-569d572ee799" as="document">
+  <link rel="prefetch" href="https://p.superdesign.dev/draft/c28f86bf-1c10-4c12-9a00-5612ce844f13" as="document">
+  <link rel="prefetch" href="https://p.superdesign.dev/draft/a3a41ddb-b404-45cc-8522-623d746db7f7" as="document">
+  <link rel="prefetch" href="https://p.superdesign.dev/draft/38daf10a-abc0-48f1-ab87-6eb165d78f51" as="document">
+  <style>
+    @import url('https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&f[]=general-sans@600,400&display=swap');
+
+    body {
+      font-family: 'Satoshi', sans-serif;
+      background-color: #ffffff;
+      color: #1a1a1a;
+    }
+
+    h1, h2, h3 {
+      font-family: 'General Sans', sans-serif;
+    }
+
+    @view-transition {
+      navigation: auto;
+    }
+
+    html {
+      background-color: #ffffff;
+    }
+
+    ::view-transition-old(main-nav),
+    ::view-transition-new(main-nav),
+    ::view-transition-old(footer),
+    ::view-transition-new(footer) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+
+    ::view-transition-old(main-content) {
+      animation: 0.25s ease-out both fade-out;
+    }
+
+    ::view-transition-new(main-content) {
+      animation: 0.25s ease-in 0.1s both fade-in;
+    }
+
+    @keyframes fade-out {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-input {
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      border-color: #000;
+      background-color: #fff;
+    }
+  </style>
+  <style>sd-component { display: block; }</style>
+  <script src="https://cdn.jsdelivr.net/npm/petite-vue@0.4.1/dist/petite-vue.iife.js" defer init></script>
+</head>
+<body>
+  <div class="min-h-screen bg-white flex flex-col">
+    <!-- component: Header (713b5f61-62ba-41ae-a23c-6d77b75bcb17) -->
+<div v-scope="{ ...{&quot;activeItem&quot;:&quot;&quot;,&quot;programsHref&quot;:&quot;https://p.superdesign.dev/draft/f80206c5-92d2-4e4b-8cf8-569d572ee799&quot;,&quot;pricingHref&quot;:&quot;#pricing&quot;,&quot;communityHref&quot;:&quot;#community&quot;,&quot;supportHref&quot;:&quot;#support&quot;,&quot;loginHref&quot;:&quot;#login&quot;,&quot;signupHref&quot;:&quot;#signup&quot;}, $emit() {} }">
+<header class="sticky top-0 z-50 bg-white border-b border-slate-100">
+  <nav class="max-w-[1440px] mx-auto px-10 h-20 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-black rounded-sm flex items-center justify-center">
+        <iconify-icon icon="lucide:rocket" class="text-white text-xl"></iconify-icon>
+      </div>
+      <span class="text-xl font-bold tracking-tight uppercase">Rocket Academy</span>
+    </div>
+    <div class="hidden md:flex items-center gap-10 text-sm font-medium">
+      <a :href="programsHref" :class="{ 'text-black': activeItem === 'programs', 'text-slate-500 hover:text-black': activeItem !== 'programs' }" class="transition-colors">Programs</a>
+      <a :href="pricingHref" :class="{ 'text-black': activeItem === 'pricing', 'text-slate-500 hover:text-black': activeItem !== 'pricing' }" class="transition-colors">Pricing</a>
+      <a :href="communityHref" :class="{ 'text-black': activeItem === 'community', 'text-slate-500 hover:text-black': activeItem !== 'community' }" class="transition-colors">Community</a>
+      <a :href="supportHref" :class="{ 'text-black': activeItem === 'support', 'text-slate-500 hover:text-black': activeItem !== 'support' }" class="transition-colors">Support</a>
+    </div>
+    <div class="flex items-center gap-6">
+      <a :href="loginHref" class="text-sm font-medium text-slate-900 hover:text-black transition-colors">Parent Portal</a>
+      <a :href="signupHref" class="px-5 py-2.5 bg-black text-white text-sm font-medium rounded-full hover:bg-slate-800 transition-colors">Get Started</a>
+    </div>
+  </nav>
+</header>
+</div>
+<!-- /component: Header (713b5f61-62ba-41ae-a23c-6d77b75bcb17) -->
+
+    <main style="view-transition-name: main-content" class="flex-grow max-w-[1440px] mx-auto px-10 pt-32 pb-32 w-full">
+      <div class="mb-12">
+        <a href="https://p.superdesign.dev/draft/c28f86bf-1c10-4c12-9a00-5612ce844f13" id="back-to-details" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-black transition-colors">
+          <iconify-icon icon="lucide:arrow-left"></iconify-icon>
+          Back to Course Details
+        </a>
+        <h1 class="text-4xl font-semibold mt-6 tracking-tight">Checkout</h1>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <!-- Left Column: Billing Information -->
+        <div class="lg:col-span-7">
+          <form class="space-y-12">
+            <section>
+              <h2 class="text-xl font-semibold mb-6 flex items-center gap-3">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-xs">1</span>
+                Parent / Guardian Information
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="parent-name">Full Name</label>
+                  <input type="text" id="parent-name" placeholder="e.g. Sarah Jenkins" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="parent-email">Email Address</label>
+                  <input type="email" id="parent-email" placeholder="sarah.jenkins@example.com" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                </div>
+                <div class="space-y-2 md:col-span-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="phone">Phone Number</label>
+                  <input type="tel" id="phone" placeholder="+1 (555) 000-0000" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 class="text-xl font-semibold mb-6 flex items-center gap-3">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-xs">2</span>
+                Student Information
+              </h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="student-name">Student Name</label>
+                  <input type="text" id="student-name" placeholder="Child's Full Name" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                </div>
+                <div class="space-y-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="student-age">Age / Grade Level</label>
+                  <select id="student-age" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black appearance-none">
+                    <option value="">Select level...</option>
+                    <option value="10">10 years old</option>
+                    <option value="11">11 years old</option>
+                    <option value="12">12 years old</option>
+                    <option value="13">13 years old</option>
+                    <option value="14">14 years old</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 class="text-xl font-semibold mb-6 flex items-center gap-3">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-black text-white text-xs">3</span>
+                Billing Address
+              </h2>
+              <div class="grid grid-cols-1 gap-6">
+                <div class="space-y-2">
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="address">Street Address</label>
+                  <input type="text" id="address" placeholder="123 Innovation Drive" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="city">City</label>
+                    <input type="text" id="city" placeholder="San Francisco" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="zip">ZIP / Postal Code</label>
+                    <input type="text" id="zip" placeholder="94103" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black">
+                  </div>
+                  <div class="space-y-2 col-span-2 md:col-span-1">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500" for="country">Country</label>
+                    <select id="country" class="form-input w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-1 focus:ring-black appearance-none">
+                      <option value="US">United States</option>
+                      <option value="UK">United Kingdom</option>
+                      <option value="CA">Canada</option>
+                      <option value="SG">Singapore</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </form>
+        </div>
+
+        <!-- Right Column: Order Summary -->
+        <div class="lg:col-span-5">
+          <div class="sticky top-32">
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-8">
+              <h3 class="text-lg font-semibold mb-6">Order Summary</h3>
+              
+              <div class="flex items-start gap-4 mb-8">
+                <div class="w-20 h-20 bg-white border border-slate-200 rounded-xl flex items-center justify-center shrink-0">
+                  <iconify-icon icon="lucide:code-2" class="text-3xl text-black"></iconify-icon>
+                </div>
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Program: K-12</span>
+                  <h4 class="font-semibold text-lg leading-tight mt-0.5">Intro to Creative Coding</h4>
+                  <p class="text-sm text-slate-500 mt-1">Starting Sep 15, 2024</p>
+                </div>
+              </div>
+
+              <div class="space-y-4 border-t border-slate-200 pt-6 mb-8">
+                <div class="flex justify-between text-sm">
+                  <span class="text-slate-500">Tuition Fee</span>
+                  <span class="font-medium">$299.00</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-slate-500">Learning Materials</span>
+                  <span class="font-medium">Included</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-slate-500">Platform Fee</span>
+                  <span class="font-medium">$15.00</span>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-end border-t border-slate-200 pt-6 mb-10">
+                <span class="text-lg font-semibold">Total Amount</span>
+                <div class="text-right">
+                  <span class="text-xs text-slate-400 font-medium uppercase block mb-1">USD</span>
+                  <span class="text-3xl font-bold tracking-tight">$314.00</span>
+                </div>
+              </div>
+
+              <a href="https://p.superdesign.dev/draft/a3a41ddb-b404-45cc-8522-623d746db7f7" id="continue-to-payment" class="w-full flex items-center justify-center gap-2 py-5 bg-black text-white rounded-2xl font-bold hover:bg-slate-800 transition-all">
+                Continue to Payment
+                <iconify-icon icon="lucide:arrow-right"></iconify-icon>
+              </a>
+              
+              <div class="mt-6 flex items-center justify-center gap-4">
+                <iconify-icon icon="logos:visa" class="text-2xl opacity-60 grayscale hover:grayscale-0 transition-all"></iconify-icon>
+                <iconify-icon icon="logos:mastercard" class="text-2xl opacity-60 grayscale hover:grayscale-0 transition-all"></iconify-icon>
+                <iconify-icon icon="logos:paypal" class="text-2xl opacity-60 grayscale hover:grayscale-0 transition-all"></iconify-icon>
+                <iconify-icon icon="logos:stripe" class="text-3xl opacity-60 grayscale hover:grayscale-0 transition-all"></iconify-icon>
+              </div>
+            </div>
+
+            <div class="mt-8 flex items-start gap-4 p-4 rounded-2xl bg-emerald-50 border border-emerald-100">
+              <iconify-icon icon="lucide:shield-check" class="text-2xl text-emerald-600 mt-0.5"></iconify-icon>
+              <div>
+                <h5 class="text-sm font-semibold text-emerald-900">Secure Enrollment</h5>
+                <p class="text-xs text-emerald-700 mt-1">Your data is protected with 256-bit SSL encryption and secure payment processing.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- component: Footer (5fc7e822-1f1d-4e62-8dd0-73561f107c5f) -->
+<div v-scope="{ ...{&quot;k12Href&quot;:&quot;#k12&quot;,&quot;universityHref&quot;:&quot;#university&quot;,&quot;careerHref&quot;:&quot;#career&quot;,&quot;scholarshipHref&quot;:&quot;#scholarships&quot;,&quot;aboutHref&quot;:&quot;#about&quot;,&quot;instructorsHref&quot;:&quot;#instructors&quot;,&quot;privacyHref&quot;:&quot;#privacy&quot;,&quot;termsHref&quot;:&quot;#terms&quot;,&quot;twitterHref&quot;:&quot;#twitter&quot;,&quot;linkedinHref&quot;:&quot;#linkedin&quot;,&quot;instagramHref&quot;:&quot;#instagram&quot;,&quot;copyrightYear&quot;:2024}, $emit() {} }">
+<footer class="bg-slate-50 border-t border-slate-100 py-20">
+  <div class="max-w-[1440px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
+    <div class="col-span-1 md:col-span-1">
+      <div class="flex items-center gap-2 mb-6">
+        <div class="w-6 h-6 bg-black rounded-sm flex items-center justify-center">
+          <iconify-icon icon="lucide:rocket" class="text-white text-sm"></iconify-icon>
+        </div>
+        <span class="font-bold uppercase tracking-tight">Rocket Academy</span>
+      </div>
+      <p class="text-slate-400 leading-relaxed">
+        Building the next generation of digital leaders through rigorous, expert-led technical education.
+      </p>
+    </div>
+    
+    <div>
+      <h4 class="font-bold mb-6 uppercase tracking-wider text-[11px] text-slate-400">Programs</h4>
+      <ul class="space-y-4 font-medium">
+        <li><a :href="k12Href" class="hover:text-black transition-colors">K-12 Pathways</a></li>
+        <li><a :href="universityHref" class="hover:text-black transition-colors">University Support</a></li>
+        <li><a :href="careerHref" class="hover:text-black transition-colors">Career Accelerators</a></li>
+        <li><a :href="scholarshipHref" class="hover:text-black transition-colors">Scholarships</a></li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4 class="font-bold mb-6 uppercase tracking-wider text-[11px] text-slate-400">Company</h4>
+      <ul class="space-y-4 font-medium">
+        <li><a :href="aboutHref" class="hover:text-black transition-colors">About Us</a></li>
+        <li><a :href="instructorsHref" class="hover:text-black transition-colors">Our Instructors</a></li>
+        <li><a :href="privacyHref" class="hover:text-black transition-colors">Privacy Policy</a></li>
+        <li><a :href="termsHref" class="hover:text-black transition-colors">Terms of Service</a></li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4 class="font-bold mb-6 uppercase tracking-wider text-[11px] text-slate-400">Connect</h4>
+      <div class="flex gap-4">
+        <a :href="twitterHref" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-black transition-colors">
+          <iconify-icon icon="lucide:twitter" class="text-lg"></iconify-icon>
+        </a>
+        <a :href="linkedinHref" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-black transition-colors">
+          <iconify-icon icon="lucide:linkedin" class="text-lg"></iconify-icon>
+        </a>
+        <a :href="instagramHref" class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-black transition-colors">
+          <iconify-icon icon="lucide:instagram" class="text-lg"></iconify-icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-[1440px] mx-auto px-10 mt-20 pt-8 border-t border-slate-100 flex justify-between items-center text-[12px] text-slate-400 font-medium">
+    <span>© {{ copyrightYear }} Rocket Academy. All rights reserved.</span>
+    <span>Designed for parent-student success.</span>
+  </div>
+</footer>
+</div>
+<!-- /component: Footer (5fc7e822-1f1d-4e62-8dd0-73561f107c5f) -->
+  </div>
+</body>
+</html>
