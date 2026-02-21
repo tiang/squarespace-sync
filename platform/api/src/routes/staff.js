@@ -44,10 +44,10 @@ router.get('/staff', async (req, res, next) => {
 // POST /api/v1/staff
 router.post('/staff', async (req, res, next) => {
   try {
-    const { firstName, lastName, email, phone, role } = req.body;
+    const { firstName, lastName, email, phone, role, organisationId } = req.body;
 
-    if (!firstName || !lastName || !email || !role) {
-      return res.status(400).json({ error: 'firstName, lastName, email, and role are required' });
+    if (!firstName || !lastName || !email || !role || !organisationId) {
+      return res.status(400).json({ error: 'firstName, lastName, email, role, and organisationId are required' });
     }
 
     if (!VALID_ROLES.includes(role)) {
@@ -55,9 +55,8 @@ router.post('/staff', async (req, res, next) => {
     }
 
     // TODO: derive organisationId from authenticated session once auth is implemented
-    // For now, POST will fail against a real DB without organisationId
     const staff = await prisma.staff.create({
-      data: { firstName, lastName, email, phone: phone || null, role },
+      data: { firstName, lastName, email, phone: phone || null, role, organisationId },
     });
 
     res.status(201).json(staff);
