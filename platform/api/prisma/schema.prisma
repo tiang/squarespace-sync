@@ -92,6 +92,8 @@ model Staff {
   lastName       String
   email          String       @unique
   role           StaffRole
+  phone          String?
+  isActive       Boolean      @default(true)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
