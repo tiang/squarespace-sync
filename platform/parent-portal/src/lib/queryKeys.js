@@ -3,4 +3,5 @@ export const QUERY_KEYS = {
   attendance: (studentId) => ['parent', 'attendance', studentId],
   invoices:   () => ['parent', 'invoices'],
   messages:   () => ['parent', 'messages'],
+  sessions:   () => ['parent', 'sessions'],
 };
