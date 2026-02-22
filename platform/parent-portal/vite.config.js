@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@ra/ui': path.resolve(__dirname, '../ui/src'),
+      '@ra/ui': path.resolve(__dirname, './ui/src'),
     },
   },
   server: {
