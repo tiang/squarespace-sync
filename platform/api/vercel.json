@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx prisma generate && npx prisma migrate deploy",
+  "buildCommand": "npx prisma generate",
   "installCommand": "npm install",
   "functions": {
     "src/index.js": {
