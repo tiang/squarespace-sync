@@ -22,6 +22,14 @@ async function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 
+  // Phone OTP sign-in produces tokens with phone_number but no email.
+  // Family lookup is currently by primaryEmail only. Phone-only sessions
+  // will always reach the account-not-found help form until phone-number
+  // lookup is implemented (requires Family.primaryPhone to be unique).
+  if (!decoded.email) {
+    return res.status(403).json({ code: 'FAMILY_NOT_FOUND' });
+  }
+
   const family = await prisma.family.findUnique({
     where: { primaryEmail: decoded.email },
     select: { id: true },

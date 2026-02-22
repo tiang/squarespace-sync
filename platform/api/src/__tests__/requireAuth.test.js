@@ -47,6 +47,16 @@ describe('requireAuth middleware', () => {
     expect(next).not.toHaveBeenCalled();
   });
 
+  it('returns 403 FAMILY_NOT_FOUND when token has no email (phone OTP)', async () => {
+    const { req, res, next } = mockReqRes();
+    req.headers.authorization = 'Bearer phone-token';
+    verifyIdToken.mockResolvedValue({ phone_number: '+61400000000' }); // no email
+    await requireAuth(req, res, next);
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.json).toHaveBeenCalledWith({ code: 'FAMILY_NOT_FOUND' });
+    expect(next).not.toHaveBeenCalled();
+  });
+
   it('returns 403 FAMILY_NOT_FOUND when email has no matching family', async () => {
     const { req, res, next } = mockReqRes();
     req.headers.authorization = 'Bearer valid-token';
