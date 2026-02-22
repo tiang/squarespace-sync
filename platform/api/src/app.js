@@ -5,6 +5,7 @@ const instructorRoutes = require('./routes/instructor');
 const sessionRoutes = require('./routes/sessions');
 const parentRoutes = require('./routes/parent');
 const staffRoutes = require('./routes/staff');
+const pendingRegistrationRoutes = require('./routes/pendingRegistration');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/v1', instructorRoutes);
 app.use('/api/v1', sessionRoutes);
 app.use('/api/v1', parentRoutes);
 app.use('/api/v1', staffRoutes);
+app.use('/api/v1', pendingRegistrationRoutes);
 
 app.get('/api/health', async (req, res) => {
   try {

@@ -150,3 +150,28 @@ describe('Parent portal stub routes', () => {
     });
   });
 });
+
+describe('POST /api/v1/parent/pending-registration', () => {
+  it('returns 201 and stores the submission', async () => {
+    const payload = {
+      email:           'new.parent@example.com',
+      phone:           '0400 000 000',
+      childName:       'Emma',
+      partnerName:     'James',
+      locationEnrolled: 'Brisbane',
+    };
+    const res = await request(app)
+      .post('/api/v1/parent/pending-registration')
+      .send(payload);
+    expect(res.status).toBe(201);
+    expect(res.body.id).toBeDefined();
+    expect(res.body.email).toBe(payload.email);
+  });
+
+  it('returns 400 when email is missing', async () => {
+    const res = await request(app)
+      .post('/api/v1/parent/pending-registration')
+      .send({ phone: '0400 000 000' });
+    expect(res.status).toBe(400);
+  });
+});
