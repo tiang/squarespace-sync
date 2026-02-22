@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "buildCommand": "cd ui && npm install && cd ../admin && npm install && npm run build",
+  "outputDirectory": "admin/dist",
+  "installCommand": "npm install || true",
   "framework": "vite"
 }
