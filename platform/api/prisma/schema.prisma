@@ -231,3 +231,15 @@ model Attendance {
   @@unique([sessionId, studentId])
   @@map("attendances")
 }
+
+model PendingRegistration {
+  id               String   @id @default(cuid())
+  email            String
+  phone            String?
+  childName        String?
+  partnerName      String?
+  locationEnrolled String?
+  createdAt        DateTime @default(now())
+
+  @@map("pending_registrations")
+}
