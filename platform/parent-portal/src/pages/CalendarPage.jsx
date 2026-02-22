@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@iconify/react';
 import { Badge } from '@ra/ui';
@@ -66,7 +67,7 @@ function SessionRow({ session }) {
     >
       {/* Date/time */}
       <div className="flex-1 min-w-0">
-        <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${isCancelled ? 'text-slate-400' : 'text-slate-400'}`}>
+        <p className="text-xs font-bold uppercase tracking-wider mb-1 text-slate-400">
           {formatSessionTime(session.scheduledAt, session.durationMinutes)}
         </p>
         <p className={`font-semibold text-sm truncate ${isCancelled ? 'line-through text-slate-400' : 'text-slate-900'}`}>
@@ -106,7 +107,7 @@ export default function CalendarPage() {
     queryFn: () => get('/api/v1/parent/stub/sessions'),
   });
 
-  const groups = groupByWeek(sessions);
+  const groups = useMemo(() => groupByWeek(sessions), [sessions]);
 
   return (
     <div>
