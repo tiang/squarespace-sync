@@ -4,9 +4,10 @@ import { Icon } from '@iconify/react';
 
 const NAV_ITEMS = [
   { to: '/parent',          label: 'Dashboard', icon: 'lucide:layout-dashboard', end: true },
-  { to: '/parent/billing',  label: 'Billing',   icon: 'lucide:receipt'          },
-  { to: '/parent/messages', label: 'Messages',  icon: 'lucide:message-circle'   },
-  { to: '/parent/profile',  label: 'Profile',   icon: 'lucide:user'             },
+  { to: '/parent/calendar', label: 'Calendar',  icon: 'lucide:calendar'          },
+  { to: '/parent/billing',  label: 'Billing',   icon: 'lucide:receipt'           },
+  { to: '/parent/messages', label: 'Messages',  icon: 'lucide:message-circle'    },
+  { to: '/parent/profile',  label: 'Profile',   icon: 'lucide:user'              },
 ];
 
 function NavItem({ to, label, icon, end, onClick }) {
