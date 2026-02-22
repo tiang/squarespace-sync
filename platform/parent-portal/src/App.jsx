@@ -8,6 +8,7 @@ import CalendarPage from './pages/CalendarPage.jsx';
 import BillingPage from './pages/BillingPage.jsx';
 import MessagesPage from './pages/MessagesPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import AccountNotFoundPage from './pages/AccountNotFoundPage.jsx';
 
 const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      { path: '/account-not-found', element: <AccountNotFoundPage /> },
       {
         element: <ParentLayout />,
         children: [
