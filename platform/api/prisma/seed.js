@@ -209,12 +209,54 @@ async function main() {
       },
     });
 
-    // Sessions 3 & 4 are future/UPCOMING — no attendance records seeded
+    // Sessions 3-7 are future/UPCOMING — no attendance records seeded
+    // Cohort1 (Junior Engineers) upcoming sessions
+    await tx.session.create({
+      data: {
+        cohortId: cohort1.id,
+        leadInstructorId: jake.id,
+        scheduledAt: new Date('2026-02-24T05:00:00.000Z'), // Mon 4:00 PM AEDT — tomorrow
+        durationMinutes: 75,
+        status: 'SCHEDULED',
+      },
+    });
+
+    await tx.session.create({
+      data: {
+        cohortId: cohort1.id,
+        leadInstructorId: jake.id,
+        scheduledAt: new Date('2026-02-26T05:00:00.000Z'), // Wed 4:00 PM AEDT — this week
+        durationMinutes: 75,
+        status: 'SCHEDULED',
+      },
+    });
+
+    await tx.session.create({
+      data: {
+        cohortId: cohort1.id,
+        leadInstructorId: jake.id,
+        scheduledAt: new Date('2026-03-03T05:00:00.000Z'), // Tue 4:00 PM AEDT — next week
+        durationMinutes: 75,
+        status: 'CANCELLED',
+      },
+    });
+
+    await tx.session.create({
+      data: {
+        cohortId: cohort1.id,
+        leadInstructorId: jake.id,
+        scheduledAt: new Date('2026-03-05T05:00:00.000Z'), // Thu 4:00 PM AEDT — next week
+        durationMinutes: 75,
+        status: 'SCHEDULED',
+      },
+    });
+
+    // Cohort2 (Master Builder) upcoming sessions
     await tx.session.create({
       data: {
         cohortId: cohort2.id,
         leadInstructorId: emma.id,
-        scheduledAt: new Date('2026-02-25T06:00:00.000Z'), // Wed 5:00 PM AEDT — future
+        scheduledAt: new Date('2026-02-25T06:00:00.000Z'), // Wed 5:00 PM AEDT — this week
         durationMinutes: 75,
         status: 'SCHEDULED',
       },
@@ -224,7 +266,7 @@ async function main() {
       data: {
         cohortId: cohort2.id,
         leadInstructorId: emma.id,
-        scheduledAt: new Date('2026-03-04T06:00:00.000Z'), // Wed 5:00 PM AEDT — future
+        scheduledAt: new Date('2026-03-04T06:00:00.000Z'), // Wed 5:00 PM AEDT — next week
         durationMinutes: 75,
         status: 'SCHEDULED',
       },
@@ -277,7 +319,7 @@ async function main() {
 
   console.log('Seed complete:');
   console.log('  1 organisation, 1 campus, 3 staff');
-  console.log('  2 programs, 2 cohorts, 4 sessions');
+  console.log('  2 programs, 2 cohorts, 8 sessions');
   console.log('  12 families, 12 students, 12 enrolments');
   console.log('  12 attendance records (sessions 1 & 2 only)');
 }

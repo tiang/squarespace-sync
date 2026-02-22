@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@iconify/react';
 import { get } from '../lib/api.js';
@@ -181,9 +182,12 @@ export default function ParentDashboard() {
               </div>
             )}
 
-            <button type="button" title="Calendar view coming soon" disabled className="w-full mt-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold opacity-50 cursor-not-allowed">
+            <Link
+              to="/parent/calendar"
+              className="block w-full mt-8 py-3 bg-white border border-slate-200 rounded-xl text-xs font-bold text-center hover:bg-slate-50 transition-colors"
+            >
               View Full Calendar
-            </button>
+            </Link>
           </div>
 
           {/* Parent Resources */}
