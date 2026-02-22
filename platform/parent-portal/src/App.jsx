@@ -1,5 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
 import ParentLayout from './components/ParentLayout.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 import ParentDashboard from './pages/ParentDashboard.jsx';
 import ChildDetail from './pages/ChildDetail.jsx';
 import CalendarPage from './pages/CalendarPage.jsx';
@@ -8,16 +10,22 @@ import MessagesPage from './pages/MessagesPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 
 const router = createBrowserRouter([
-  { path: '/', element: <Navigate to="/parent" replace /> },
+  { path: '/login', element: <LoginPage /> },
+  { path: '/',      element: <Navigate to="/parent" replace /> },
   {
-    element: <ParentLayout />,
+    element: <ProtectedRoute />,
     children: [
-      { path: '/parent',               element: <ParentDashboard /> },
-      { path: '/parent/children/:id',  element: <ChildDetail /> },
-      { path: '/parent/calendar',      element: <CalendarPage /> },
-      { path: '/parent/billing',       element: <BillingPage /> },
-      { path: '/parent/messages',      element: <MessagesPage /> },
-      { path: '/parent/profile',       element: <ProfilePage /> },
+      {
+        element: <ParentLayout />,
+        children: [
+          { path: '/parent',               element: <ParentDashboard /> },
+          { path: '/parent/children/:id',  element: <ChildDetail /> },
+          { path: '/parent/calendar',      element: <CalendarPage /> },
+          { path: '/parent/billing',       element: <BillingPage /> },
+          { path: '/parent/messages',      element: <MessagesPage /> },
+          { path: '/parent/profile',       element: <ProfilePage /> },
+        ],
+      },
     ],
   },
 ]);
