@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../lib/firebase.js';
 
 const NAV_ITEMS = [
   { to: '/parent',          label: 'Dashboard', icon: 'lucide:layout-dashboard', end: true },
@@ -66,6 +68,15 @@ export default function ParentLayout() {
                 <NavItem key={item.to} {...item} onClick={() => setDrawerOpen(false)} />
               ))}
             </nav>
+            <div className="mt-6 pt-6 border-t border-slate-100">
+              <button
+                onClick={() => { signOut(auth); setDrawerOpen(false); }}
+                className="flex items-center gap-2 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <Icon icon="lucide:log-out" className="w-4 h-4" />
+                Sign out
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -83,8 +94,15 @@ export default function ParentLayout() {
               <NavItem key={item.to} {...item} />
             ))}
           </nav>
-          <div className="px-4 pt-6 border-t border-slate-100">
+          <div className="px-4 pt-6 border-t border-slate-100 space-y-2">
             <p className="text-xs text-slate-400">Parent Portal</p>
+            <button
+              onClick={() => signOut(auth)}
+              className="flex items-center gap-2 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <Icon icon="lucide:log-out" className="w-3.5 h-3.5" />
+              Sign out
+            </button>
           </div>
         </aside>
 
